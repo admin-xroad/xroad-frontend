@@ -12,6 +12,7 @@ import { TranslationModule } from '../../modules/i18n';
 import { LayoutComponent } from './layout.component';
 import { ExtrasModule } from '../partials/layout/extras/extras.module';
 import { Routing } from '../../pages/routing';
+import { AdminRouting } from '../../pages/admin/admin-routing';
 import { HeaderComponent } from './components/header/header.component';
 import { ContentComponent } from './components/content/content.component';
 import { FooterComponent } from './components/footer/footer.component';
@@ -45,6 +46,11 @@ const routes: Routes = [
     path: '',
     component: LayoutComponent,
     children: Routing,
+  },
+  {
+    path: 'admin',
+    component: LayoutComponent,
+    children: AdminRouting,
   },
 ];
 
