@@ -45,14 +45,7 @@ export class UserListingComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit(): void {
     this.datatableConfig = {
       serverSide: true,
-      ajax: (       const additionalFilters = {
-        // Add your additional filter properties here
-        customFilter1: 'value1',
-        customFilter2: 'value2',
-      };
-
-      // Merge additional filters with the DataTables parameters
-      const requestData = { ...dataTablesParameters, ...additionalFilters };: any, callback) => {
+      ajax: (dataTablesParameters: any, callback) => {
         console.log(dataTablesParameters);
         // Include additional filter data
         const additionalFilters = {
