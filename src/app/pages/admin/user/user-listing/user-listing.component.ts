@@ -65,7 +65,7 @@ export class UserListingComponent implements OnInit, AfterViewInit, OnDestroy {
 
             const nameAndEmail = `
               <div class="d-flex flex-column" data-action="view" data-id="${full.id}">
-                <a href="javascript:;" class="text-gray-800 text-hover-primary mb-1">${data}</a>
+                <a href="admin/users/${full.id}" class="text-gray-800 text-hover-primary mb-1">${data}</a>
                 <span>${full.email}</span>
               </div>
             `;
