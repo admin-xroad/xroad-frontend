@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import { DataTablesResponse, IUserModel, UserService } from 'src/app/_fake/services/user-service';
 import { SweetAlertOptions } from 'sweetalert2';
 import moment from 'moment';
-import { IRoleModel, RoleService } from 'src/app/_fake/services/role.service';
+import { RoleService } from 'src/app/services/admin/role/role.service';
 
 @Component({
   selector: 'app-user-listing',
