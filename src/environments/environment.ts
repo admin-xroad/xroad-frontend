@@ -4,10 +4,16 @@
 
 export const environment = {
   production: false,
+  domain: 'http://xroad.au',
+  // apiUrl: 'https://xroad.au/api',
+  apiUrl: 'http://127.0.0.1:8000/api',
+  googleApiKey: 'AIzaSyBI-Dj3PZGWnP8rHtgNNvhbp73zEYPOHwY',
+
+  
   appVersion: 'v8.1.8',
   USERDATA_KEY: 'authf649fc9a5f55',
   isMockEnabled: true,
-  apiUrl: 'api',
+  // apiUrl: 'api',
   appThemeName: 'Metronic',
   appPurchaseUrl: 'https://1.envato.market/EA4JP',
   appHTMLIntegration:

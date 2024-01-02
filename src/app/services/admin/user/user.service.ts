@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { IRoleModel } from './role.service';
+import { IRoleModel } from '../role/role.service';
 import { environment } from 'src/environments/environment';
 
 export interface DataTablesResponse {

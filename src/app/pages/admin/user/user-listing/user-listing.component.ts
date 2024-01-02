@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import { DataTablesResponse, IUserModel, UserService } from 'src/app/_fake/services/user-service';
 import { SweetAlertOptions } from 'sweetalert2';
 import moment from 'moment';
-import { IRoleModel, RoleService } from 'src/app/_fake/services/role.service';
+import { RoleService } from 'src/app/services/admin/role/role.service';
 
 @Component({
   selector: 'app-user-listing',
@@ -45,14 +45,33 @@ export class UserListingComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit(): void {
     this.datatableConfig = {
       serverSide: true,
-      ajax: (dataTablesParameters: any, callback) => {
-        this.apiService.getUsers(dataTablesParameters).subscribe(resp => {
+      ajax: (       const additionalFilters = {
+        // Add your additional filter properties here
+        customFilter1: 'value1',
+        customFilter2: 'value2',
+      };
+
+      // Merge additional filters with the DataTables parameters
+      const requestData = { ...dataTablesParameters, ...additionalFilters };: any, callback) => {
+        console.log(dataTablesParameters);
+        // Include additional filter data
+        const additionalFilters = {
+          // Add your additional filter properties here
+          customFilter1: 'value1',
+          customFilter2: 'value2',
+        };
+
+        // Merge additional filters with the DataTables parameters
+        const requestData = { ...dataTablesParameters, ...additionalFilters };
+
+        this.apiService.getUsers(requestData).subscribe(resp => {
           callback(resp);
         });
       },
       columns: [
         {
           title: 'Name', data: 'name', render: function (data, type, full) {
+            
             const colorClasses = ['success', 'info', 'warning', 'danger'];
             const randomColorClass = colorClasses[Math.floor(Math.random() * colorClasses.length)];
 
@@ -65,7 +84,7 @@ export class UserListingComponent implements OnInit, AfterViewInit, OnDestroy {
 
             const nameAndEmail = `
               <div class="d-flex flex-column" data-action="view" data-id="${full.id}">
-                <a href="javascript:;" class="text-gray-800 text-hover-primary mb-1">${data}</a>
+                <a href="admin/users/${full.id}" class="text-gray-800 text-hover-primary mb-1">${data}</a>
                 <span>${full.email}</span>
               </div>
             `;
