@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { IRoleModel } from './role.service';
+import { environment } from 'src/environments/environment';
 
 export interface DataTablesResponse {
     draw?: number;
@@ -36,13 +37,23 @@ export class UserService {
 
     constructor(private http: HttpClient) { }
 
+    // getUsers(dataTablesParameters: any): Observable<DataTablesResponse> {
+    //     const url = `${this.apiUrl}-list`;
+    //     return this.http.post<DataTablesResponse>(url, dataTablesParameters);
+    // }
+    
     getUsers(dataTablesParameters: any): Observable<DataTablesResponse> {
-        const url = `${this.apiUrl}-list`;
+        const url = `${environment.apiUrl}/v1/users-list`;
         return this.http.post<DataTablesResponse>(url, dataTablesParameters);
     }
 
+    // getUser(id: number): Observable<IUserModel> {
+    //     const url = `${this.apiUrl}/${id}`;
+    //     return this.http.get<IUserModel>(url);
+    // }
+
     getUser(id: number): Observable<IUserModel> {
-        const url = `${this.apiUrl}/${id}`;
+        const url = `${environment.apiUrl}/v1/users/getUserById/${id}`;
         return this.http.get<IUserModel>(url);
     }
 

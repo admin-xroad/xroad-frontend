@@ -53,6 +53,7 @@ export class UserListingComponent implements OnInit, AfterViewInit, OnDestroy {
       columns: [
         {
           title: 'Name', data: 'name', render: function (data, type, full) {
+            
             const colorClasses = ['success', 'info', 'warning', 'danger'];
             const randomColorClass = colorClasses[Math.floor(Math.random() * colorClasses.length)];
 
