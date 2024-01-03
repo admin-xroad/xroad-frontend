@@ -41,9 +41,9 @@ export class UserService {
     //     const url = `${this.apiUrl}-list`;
     //     return this.http.post<DataTablesResponse>(url, dataTablesParameters);
     // }
-    
+
     getUsers(dataTablesParameters: any): Observable<DataTablesResponse> {
-        const url = `${environment.apiUrl}/v1/users-list`;
+        const url = `${environment.apiUrl}/admin/v1/users/users_dataTable`;
         return this.http.post<DataTablesResponse>(url, dataTablesParameters);
     }
 
@@ -53,7 +53,7 @@ export class UserService {
     // }
 
     getUser(id: number): Observable<IUserModel> {
-        const url = `${environment.apiUrl}/v1/users/getUserById/${id}`;
+        const url = `${environment.apiUrl}/admin/v1/users/edit/${id}`;
         return this.http.get<IUserModel>(url);
     }
 

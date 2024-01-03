@@ -11,6 +11,12 @@ export interface DataTablesResponse {
     data: any[];
 }
 
+export interface ApiResponse {
+    status: boolean;
+    message: string;
+    data: IUserModel;
+}
+
 export interface IUserModel {
     avatar?: null | string;
     created_at?: string;
@@ -43,7 +49,7 @@ export class UserService {
     // }
     
     getUsers(dataTablesParameters: any): Observable<DataTablesResponse> {
-        const url = `${environment.apiUrl}/v1/users-list`;
+        const url = `${environment.apiUrl}/admin/v1/users/users_dataTable`;
         return this.http.post<DataTablesResponse>(url, dataTablesParameters);
     }
 
@@ -52,9 +58,9 @@ export class UserService {
     //     return this.http.get<IUserModel>(url);
     // }
 
-    getUser(id: number): Observable<IUserModel> {
-        const url = `${environment.apiUrl}/v1/users/getUserById/${id}`;
-        return this.http.get<IUserModel>(url);
+    edit(id: number): Observable<ApiResponse> {
+        const url = `${environment.apiUrl}/admin/v1/users/edit/${id}`;
+        return this.http.get<ApiResponse>(url);
     }
 
     createUser(user: IUserModel): Observable<IUserModel> {

@@ -2,7 +2,7 @@ import { AfterViewInit, ChangeDetectorRef, Component, EventEmitter, OnDestroy, O
 import { NgForm } from '@angular/forms';
 import { SwalComponent } from '@sweetalert2/ngx-sweetalert2';
 import { Observable } from 'rxjs';
-import { DataTablesResponse, IUserModel, UserService } from 'src/app/_fake/services/user-service';
+import { ApiResponse, DataTablesResponse, IUserModel, UserService } from 'src/app/services/admin/user/user.service';
 import { SweetAlertOptions } from 'sweetalert2';
 import moment from 'moment';
 import { RoleService } from 'src/app/services/admin/role/role.service';
@@ -27,7 +27,7 @@ export class UserListingComponent implements OnInit, AfterViewInit, OnDestroy {
   reloadEvent: EventEmitter<boolean> = new EventEmitter();
 
   // Single model
-  aUser: Observable<IUserModel>;
+  // aUser: Observable<ApiResponse>;
   userModel: IUserModel = { id: 0, name: '', email: '', role: '' };
 
   @ViewChild('noticeSwal')
@@ -46,12 +46,11 @@ export class UserListingComponent implements OnInit, AfterViewInit, OnDestroy {
     this.datatableConfig = {
       serverSide: true,
       ajax: (dataTablesParameters: any, callback) => {
-        console.log(dataTablesParameters);
         // Include additional filter data
         const additionalFilters = {
           // Add your additional filter properties here
-          customFilter1: 'value1',
-          customFilter2: 'value2',
+          user_id: 1,
+          status: 1,
         };
 
         // Merge additional filters with the DataTables parameters
@@ -129,9 +128,8 @@ export class UserListingComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   edit(id: number) {
-    this.aUser = this.apiService.getUser(id);
-    this.aUser.subscribe((user: IUserModel) => {
-      this.userModel = user;
+    this.apiService.edit(id).subscribe((response: ApiResponse) => {
+      this.userModel = response.data;
     });
   }
 
