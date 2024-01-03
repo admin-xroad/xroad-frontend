@@ -16,6 +16,7 @@ export class UserListingComponent implements OnInit, AfterViewInit, OnDestroy {
 
   isCollapsed1 = false;
   isCollapsed2 = true;
+  isCollapsedFilter = true;
 
   isLoading = false;
 
@@ -37,21 +38,38 @@ export class UserListingComponent implements OnInit, AfterViewInit, OnDestroy {
 
   roles$: Observable<DataTablesResponse>;
 
+  verifiedOption = [
+    { value: "", label: 'All' },
+    { value: 0, label: 'No' },
+    { value: 1, label: 'Yes' },
+  ];
+  verifiedValue = "";
+  
+
   constructor(private apiService: UserService, private roleService: RoleService, private cdr: ChangeDetectorRef) { }
 
   ngAfterViewInit(): void {
   }
 
   ngOnInit(): void {
+    this.loadUserDataTable();
+    this.roles$ = this.roleService.getRoles();
+  }
+
+  loadUserDataTable(isFiltered = false){
+    console.log("loadUserDataTable");
+    
     this.datatableConfig = {
       serverSide: true,
       ajax: (dataTablesParameters: any, callback) => {
         // Include additional filter data
-        const additionalFilters = {
-          // Add your additional filter properties here
-          user_id: 1,
-          status: 1,
-        };
+        const additionalFilters = {};
+        if(isFiltered){
+          const additionalFilters = {
+            // Add your additional filter properties here
+            filter_verification: this.verifiedValue,
+          };
+        }
 
         // Merge additional filters with the DataTables parameters
         const requestData = { ...dataTablesParameters, ...additionalFilters };
@@ -117,8 +135,20 @@ export class UserListingComponent implements OnInit, AfterViewInit, OnDestroy {
         $('td:eq(0)', row).addClass('d-flex align-items-center');
       },
     };
+  }
 
-    this.roles$ = this.roleService.getRoles();
+  filterApplied(){
+    console.log("filter Applied", this.verifiedValue);
+    
+    // this.loadUserDataTable(true);
+    this.reloadEvent.emit(true);
+  }
+  
+
+  resetFilter(){
+    console.log("filter Reset");
+    // this.loadUserDataTable(false);
+    this.reloadEvent.emit(true);
   }
 
   delete(id: number) {

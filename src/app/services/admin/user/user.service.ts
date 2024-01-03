@@ -64,16 +64,17 @@ export class UserService {
     }
 
     createUser(user: IUserModel): Observable<IUserModel> {
-        return this.http.post<IUserModel>(this.apiUrl, user);
+        const url = `${environment.apiUrl}/admin/v1/users/store`;
+        return this.http.post<IUserModel>(url, user);
     }
 
     updateUser(id: number, user: IUserModel): Observable<IUserModel> {
-        const url = `${this.apiUrl}/${id}`;
+        const url = `${environment.apiUrl}/admin/v1/users/update/${id}`;
         return this.http.put<IUserModel>(url, user);
     }
 
     deleteUser(id: number): Observable<void> {
-        const url = `${this.apiUrl}/${id}`;
+        const url = `${environment.apiUrl}/admin/v1/users/delete/${id}`;
         return this.http.delete<void>(url);
     }
 }

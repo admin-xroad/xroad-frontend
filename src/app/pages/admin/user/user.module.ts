@@ -8,7 +8,7 @@ import { SharedModule } from 'src/app/_metronic/shared/shared.module';
 import { NgbCollapseModule, NgbDropdownModule, NgbNavModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SweetAlert2Module } from '@sweetalert2/ngx-sweetalert2';
-
+import { Select2Module } from 'ng-select2-component';
 
 
 @NgModule({
@@ -34,6 +34,7 @@ import { SweetAlert2Module } from '@sweetalert2/ngx-sweetalert2';
     NgbCollapseModule,
     NgbTooltipModule,
     SweetAlert2Module.forChild(),
+    Select2Module,
   ]
 })
 export class UserModule { }

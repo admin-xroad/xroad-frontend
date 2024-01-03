@@ -68,7 +68,7 @@ export class CrudComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.reload) {
       this.reload.subscribe(data => {
         this.modalService.dismissAll();
-        this.datatableElement.dtInstance.then((dtInstance: DataTables.Api) => dtInstance.ajax.reload());
+        this.datatableElement.dtInstance.then((dtInstance: DataTables.Api) => dtInstance.ajax.reload(undefined, false));
       });
     }
   }
