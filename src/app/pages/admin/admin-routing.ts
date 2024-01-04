@@ -39,6 +39,10 @@ const AdminRouting: Routes = [
     loadChildren: () => import('./user/user.module').then((m) => m.UserModule),
   },
   {
+    path: 'customers',
+    loadChildren: () => import('./contacts/customer/customer.module').then((m) => m.CustomerModule),
+  },
+  {
     path: 'roles',
     loadChildren: () => import('./role/role.module').then((m) => m.RoleModule),
   },
