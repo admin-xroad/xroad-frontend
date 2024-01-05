@@ -74,18 +74,20 @@ export class ToolbarComponent implements OnInit, OnDestroy {
       this.appToolbarContainerCSSClass += ` ${containerClass}`;
     }
 
-    this.appToolbarFixedDesktop = this.layout.getProp(
-      'app.toolbar.fixed.desktop',
-      config
-    ) as boolean;
+    // this.appToolbarFixedDesktop = this.layout.getProp(
+    //   'app.toolbar.fixed.desktop',
+    //   config
+    // ) as boolean;
+    this.appToolbarFixedDesktop = true;
     if (this.appToolbarFixedDesktop) {
       document.body.setAttribute('data-kt-app-toolbar-fixed', 'true');
     }
 
-    this.appToolbarFixedMobile = this.layout.getProp(
-      'app.toolbar.fixed.mobile',
-      config
-    ) as boolean;
+    // this.appToolbarFixedMobile = this.layout.getProp(
+    //   'app.toolbar.fixed.mobile',
+    //   config
+    // ) as boolean;
+    this.appToolbarFixedMobile = true;
     if (this.appToolbarFixedMobile) {
       document.body.setAttribute('data-kt-app-toolbar-fixed-mobile', 'true');
     }
