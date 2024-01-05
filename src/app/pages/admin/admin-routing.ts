@@ -47,6 +47,10 @@ const AdminRouting: Routes = [
     loadChildren: () => import('./permission/permission.module').then((m) => m.PermissionModule),
   },
   {
+    path: 'transportation/vehicles',
+    loadChildren: () => import('./transportation/vehicle/vehicle.module').then((m) => m.VehicleModule),
+  },
+  {
     path: '',
     redirectTo: '/dashboard',
     pathMatch: 'full',
