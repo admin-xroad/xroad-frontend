@@ -17,11 +17,11 @@
       <!--begin::Toolbar-->
       <div class="d-flex justify-content-end">
         <!--begin::Add user-->
-        <button type="button"
+        <!-- <button type="button"
           class="btn btn-outline btn-outline btn-outline-primary btn-active-light-primary me-2"
           data-bs-toggle="filter" (click)="filter.toggle()">
           <i class="ki-solid ki-filter" style="font-size: 16px;"></i> Filters
-        </button>
+        </button> -->
         <button type="button" class="btn btn-primary" data-action="create">
           Add User
         </button>
@@ -127,28 +127,17 @@
           </div>
           <!--end::Input group-->
 
-          <div class="mb-7">
+          <!-- <div class="mb-7">
             <label class="required fw-semibold fs-6 mb-5">Role</label>
 
-            <div *ngFor="let role of (roles$ | async)?.data; let last = last">
-              <div class="d-flex fv-row">
-                <div class="form-check form-check-custom form-check-solid">
-                  <input class="form-check-input me-3" id="kt_modal_update_role_option_{{ role.id }}" name="role"
-                    #role="ngModel" [(ngModel)]="userModel.role" type="radio" [value]="role.name" [checked]="last" />
-                  <label class="form-check-label" for="kt_modal_update_role_option_{{ role.id }}">
-                    <div class="fw-bold text-gray-800">
-                      {{ role.name | titlecase }}
-                    </div>
-                    <div class="text-gray-600">
-                      {{ role.name }}
-                    </div>
-                  </label>
-                </div>
-              </div>
-              <div *ngIf="!last" class="separator separator-dashed my-5"></div>
-            </div>
+            <select2 [data]="rolesListOption" [value]="selectedRoles"
+            [(ngModel)]="selectedRoles" name="role_id" #role_id="ngModel" required
+            [customSearchEnabled]="true" (search)="searchRoles($event)"
+            noResultMessage="No Results Found" placeholder="Please Select" [multiple]="true">
+          </select2>
+          
 
-          </div>
+          </div> -->
 
         </div>
         <!--end::User form-->
