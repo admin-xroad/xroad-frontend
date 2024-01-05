@@ -2,17 +2,18 @@ import { AfterViewInit, ChangeDetectorRef, Component, EventEmitter, OnDestroy, O
 import { NgForm } from '@angular/forms';
 import { SwalComponent } from '@sweetalert2/ngx-sweetalert2';
 import { Observable } from 'rxjs';
-import { ApiResponse, DataTablesResponse, IUserModel, UserService } from 'src/app/services/admin/user/user.service';
 import { SweetAlertOptions } from 'sweetalert2';
 import moment from 'moment';
-import { RoleService } from 'src/app/services/admin/role/role.service';
+import { CustomerService, DataTablesResponse, ICustomerModel, ApiResponse } from 'src/app/services/admin/customer/customer.service';
+import { CountryService } from 'src/app/services/admin/country/country.service';
+import { Select2Group, Select2Option, Select2SearchEvent } from 'ng-select2-component';
 
 @Component({
-  selector: 'app-user-listing',
-  templateUrl: './user-listing.component.html',
-  styleUrls: ['./user-listing.component.scss']
+  selector: 'app-customer-listing',
+  templateUrl: './customer-listing.component.html',
+  styleUrl: './customer-listing.component.scss'
 })
-export class UserListingComponent implements OnInit, AfterViewInit, OnDestroy {
+export class CustomerListingComponent implements OnInit, AfterViewInit, OnDestroy {
 
   isCollapsed1 = false;
   isCollapsed2 = true;
@@ -20,7 +21,7 @@ export class UserListingComponent implements OnInit, AfterViewInit, OnDestroy {
 
   isLoading = false;
 
-  users: DataTablesResponse;
+  customers: DataTablesResponse;
 
   datatableConfig: DataTables.Settings = {};
 
@@ -29,7 +30,7 @@ export class UserListingComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // Single model
   // aUser: Observable<ApiResponse>;
-  userModel: IUserModel = { id: 0, name: '', email: '', role: '' };
+  customerModel: ICustomerModel = { id: 0, name: '', email: '', phone: '', country_id: '', city: '', status: undefined };
 
   @ViewChild('noticeSwal')
   noticeSwal!: SwalComponent;
@@ -41,23 +42,32 @@ export class UserListingComponent implements OnInit, AfterViewInit, OnDestroy {
   verifiedOption = [
     { value: "", label: 'All' },
     { value: 0, label: 'No' },
-    { value: 1, label: 'Yes' },
+    { value: 160, label: 'Yes' },
   ];
   verifiedValue = "";
-  
 
-  constructor(private apiService: UserService, private roleService: RoleService, private cdr: ChangeDetectorRef) { }
+  countriesListOption: (Select2Option | Select2Group)[] = []; 
+  countryModel:any=[];
+
+  constructor(private customerApiService: CustomerService , private countryApiService: CountryService, private cdr: ChangeDetectorRef) { }
 
   ngAfterViewInit(): void {
   }
 
   ngOnInit(): void {
-    this.loadUserDataTable();
-    this.roles$ = this.roleService.getRoles();
+    this.loadCustomerDataTable();
+    this.countryApiService.getCountriesList().subscribe((response: any) => {
+      this.countryModel = response.data;
+      // console.log(this.countryModel.find());
+      this.countriesListOption = response.data.map((country: any) => ({
+        value: country.id,
+        label: country.name
+      }));
+    });
   }
 
-  loadUserDataTable(isFiltered = false){
-    console.log("loadUserDataTable");
+  loadCustomerDataTable(isFiltered = false){
+    console.log("loadCustomerDataTable");
     
     this.datatableConfig = {
       serverSide: true,
@@ -74,7 +84,7 @@ export class UserListingComponent implements OnInit, AfterViewInit, OnDestroy {
         // Merge additional filters with the DataTables parameters
         const requestData = { ...dataTablesParameters, ...additionalFilters };
 
-        this.apiService.getUsers(requestData).subscribe(resp => {
+        this.customerApiService.getCustomers(requestData).subscribe(resp => {
           callback(resp);
         });
       },
@@ -94,7 +104,7 @@ export class UserListingComponent implements OnInit, AfterViewInit, OnDestroy {
 
             const nameAndEmail = `
               <div class="d-flex flex-column" data-action="view" data-id="${full.id}">
-                <a href="admin/users/${full.id}" class="text-gray-800 text-hover-primary mb-1">${data}</a>
+                <a href="admin/customers/${full.id}" class="text-gray-800 text-hover-primary mb-1">${data}</a>
                 <span>${full.email}</span>
               </div>
             `;
@@ -110,24 +120,19 @@ export class UserListingComponent implements OnInit, AfterViewInit, OnDestroy {
           }
         },
         {
-          title: 'Role', data: 'role', render: function (data, type, row) {
-            const roleName = row.roles[0]?.name;
-            return roleName || '';
-          },
-          orderData: [1],
-          orderSequence: ['asc', 'desc'],
-          type: 'string',
-        },
-        {
-          title: 'Last Login', data: 'last_login_at', render: (data, type, full) => {
-            const date = data || full.created_at;
-            const dateString = moment(date).fromNow();
-            return `<div class="badge badge-light fw-bold">${dateString}</div>`;
-          }
+          title: 'Phone', data: 'phone'
         },
         {
           title: 'Joined Date', data: 'created_at', render: function (data) {
-            return moment(data).format('DD MMM YYYY, hh:mm a');;
+            return moment(data).format('DD MMM YYYY, hh:mm a');
+          }
+        },
+        {
+          title: 'Status', data: 'status', render: function (data) {
+            const status = data;
+            const strClass = status == 1 ? "badge-success" : "badge-danger";
+            const strText = status == 1 ? "Active" : "Deactive";
+            return `<div class='badge ${strClass} fw-bold'>${strText}</div>`;
           }
         }
       ],
@@ -137,47 +142,60 @@ export class UserListingComponent implements OnInit, AfterViewInit, OnDestroy {
     };
   }
 
+
+  searchCountry(event: Select2SearchEvent) {
+      event.filteredData(
+          event.search
+              ? event.data.filter(option => option.label.toLowerCase().includes(event.search.toLowerCase()))
+              : event.data,
+      );
+  }
+
   filterApplied(){
     console.log("filter Applied", this.verifiedValue);
     
-    // this.loadUserDataTable(true);
+    // this.loadCustomerDataTable(true);
     this.reloadEvent.emit(true);
   }
   
 
   resetFilter(){
     console.log("filter Reset");
-    // this.loadUserDataTable(false);
+    // this.loadCustomerDataTable(false);
     this.reloadEvent.emit(true);
   }
 
   delete(id: number) {
-    this.apiService.deleteUser(id).subscribe(() => {
+    this.customerApiService.deleteCustomer(id).subscribe(() => {
       this.reloadEvent.emit(true);
     });
   }
 
   edit(id: number) {
-    this.apiService.edit(id).subscribe((response: ApiResponse) => {
-      this.userModel = response.data;
+    this.customerApiService.edit(id).subscribe((response: ApiResponse) => {
+      this.customerModel = response.data;
+      console.log(this.customerModel);
     });
   }
 
   create() {
-    this.userModel = { id: 0, name: '', email: '', };
+    this.customerModel = { id: 0, name: '', email: '', };
   }
 
   onSubmit(event: Event, myForm: NgForm) {
+    console.log(this.customerModel);
+    
     if (myForm && myForm.invalid) {
       return;
     }
+    // return;
 
     this.isLoading = true;
 
     const successAlert: SweetAlertOptions = {
       icon: 'success',
       title: 'Success!',
-      text: this.userModel.id > 0 ? 'User updated successfully!' : 'User created successfully!',
+      text: this.customerModel.id > 0 ? 'User updated successfully!' : 'User created successfully!',
     };
     const errorAlert: SweetAlertOptions = {
       icon: 'error',
@@ -190,7 +208,7 @@ export class UserListingComponent implements OnInit, AfterViewInit, OnDestroy {
     };
 
     const updateFn = () => {
-      this.apiService.updateUser(this.userModel.id, this.userModel).subscribe({
+      this.customerApiService.updateCustomer(this.customerModel.id, this.customerModel).subscribe({
         next: () => {
           this.showAlert(successAlert);
           this.reloadEvent.emit(true);
@@ -205,8 +223,8 @@ export class UserListingComponent implements OnInit, AfterViewInit, OnDestroy {
     };
 
     const createFn = () => {
-      this.userModel.password = 'test123';
-      this.apiService.createUser(this.userModel).subscribe({
+      this.customerModel.password = 'test123';
+      this.customerApiService.createCustomer(this.customerModel).subscribe({
         next: () => {
           this.showAlert(successAlert);
           this.reloadEvent.emit(true);
@@ -220,7 +238,7 @@ export class UserListingComponent implements OnInit, AfterViewInit, OnDestroy {
       });
     };
 
-    if (this.userModel.id > 0) {
+    if (this.customerModel.id > 0) {
       updateFn();
     } else {
       createFn();

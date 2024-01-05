@@ -2,17 +2,19 @@ import { AfterViewInit, ChangeDetectorRef, Component, EventEmitter, OnDestroy, O
 import { NgForm } from '@angular/forms';
 import { SwalComponent } from '@sweetalert2/ngx-sweetalert2';
 import { Observable } from 'rxjs';
-import { ApiResponse, DataTablesResponse, IUserModel, UserService } from 'src/app/services/admin/user/user.service';
 import { SweetAlertOptions } from 'sweetalert2';
 import moment from 'moment';
-import { RoleService } from 'src/app/services/admin/role/role.service';
-
+import { Select2Group, Select2Option, Select2SearchEvent } from 'ng-select2-component';
+import { CustomerContactService, ICustomerContactModel, ApiResponse, DataTablesResponse } from 'src/app/services/admin/customer-contact/customer-contact.service';
+import { LiveSearchService, ILiveSearchModel } from 'src/app/services/admin/live-search/live-search.service';
 @Component({
-  selector: 'app-user-listing',
-  templateUrl: './user-listing.component.html',
-  styleUrls: ['./user-listing.component.scss']
+  selector: 'app-customer-contact-listing',
+  // standalone: true,
+  // imports: [],
+  templateUrl: './customer-contact-listing.component.html',
+  styleUrl: './customer-contact-listing.component.scss'
 })
-export class UserListingComponent implements OnInit, AfterViewInit, OnDestroy {
+export class CustomerContactListingComponent implements OnInit, AfterViewInit, OnDestroy {
 
   isCollapsed1 = false;
   isCollapsed2 = true;
@@ -20,7 +22,7 @@ export class UserListingComponent implements OnInit, AfterViewInit, OnDestroy {
 
   isLoading = false;
 
-  users: DataTablesResponse;
+  contacts: DataTablesResponse;
 
   datatableConfig: DataTables.Settings = {};
 
@@ -29,35 +31,36 @@ export class UserListingComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // Single model
   // aUser: Observable<ApiResponse>;
-  userModel: IUserModel = { id: 0, name: '', email: '', role: '' };
+  contactModel: ICustomerContactModel = { id: 0, name: '', email: '', phone: '', status: undefined, customer_id: 0, password: "" };
+  
+  liveSearchModel: ILiveSearchModel = { value: "", label: "" };
 
   @ViewChild('noticeSwal')
   noticeSwal!: SwalComponent;
 
   swalOptions: SweetAlertOptions = {};
 
-  roles$: Observable<DataTablesResponse>;
 
   verifiedOption = [
     { value: "", label: 'All' },
     { value: 0, label: 'No' },
-    { value: 1, label: 'Yes' },
+    { value: 160, label: 'Yes' },
   ];
   verifiedValue = "";
-  
 
-  constructor(private apiService: UserService, private roleService: RoleService, private cdr: ChangeDetectorRef) { }
+  customersListOption: (Select2Option | Select2Group)[] = []; 
+
+  constructor(private customerContactApiService: CustomerContactService , private liveSearchApi: LiveSearchService ,private cdr: ChangeDetectorRef) { }
 
   ngAfterViewInit(): void {
   }
 
   ngOnInit(): void {
-    this.loadUserDataTable();
-    this.roles$ = this.roleService.getRoles();
+    this.loadCustomerContactDataTable();
+    
   }
 
-  loadUserDataTable(isFiltered = false){
-    console.log("loadUserDataTable");
+  loadCustomerContactDataTable(isFiltered = false){
     
     this.datatableConfig = {
       serverSide: true,
@@ -74,7 +77,7 @@ export class UserListingComponent implements OnInit, AfterViewInit, OnDestroy {
         // Merge additional filters with the DataTables parameters
         const requestData = { ...dataTablesParameters, ...additionalFilters };
 
-        this.apiService.getUsers(requestData).subscribe(resp => {
+        this.customerContactApiService.getCustomerContacts(requestData).subscribe(resp => {
           callback(resp);
         });
       },
@@ -110,24 +113,24 @@ export class UserListingComponent implements OnInit, AfterViewInit, OnDestroy {
           }
         },
         {
-          title: 'Role', data: 'role', render: function (data, type, row) {
-            const roleName = row.roles[0]?.name;
-            return roleName || '';
-          },
-          orderData: [1],
-          orderSequence: ['asc', 'desc'],
-          type: 'string',
+          title: 'Phone', data: 'phone'
         },
         {
-          title: 'Last Login', data: 'last_login_at', render: (data, type, full) => {
-            const date = data || full.created_at;
-            const dateString = moment(date).fromNow();
-            return `<div class="badge badge-light fw-bold">${dateString}</div>`;
+          title: 'Company', data: 'customer_id', render: function (data, type, full) {
+            return full.customer.name;
           }
         },
         {
           title: 'Joined Date', data: 'created_at', render: function (data) {
-            return moment(data).format('DD MMM YYYY, hh:mm a');;
+            return moment(data).format('DD MMM YYYY, hh:mm a');
+          }
+        },
+        {
+          title: 'Status', data: 'status', render: function (data) {
+            const status = data;
+            const strClass = status == 1 ? "badge-success" : "badge-danger";
+            const strText = status == 1 ? "Active" : "Deactive";
+            return `<div class='badge ${strClass} fw-bold'>${strText}</div>`;
           }
         }
       ],
@@ -137,47 +140,66 @@ export class UserListingComponent implements OnInit, AfterViewInit, OnDestroy {
     };
   }
 
+
+  searchCustomers(event: Select2SearchEvent) {
+    const searchTerm = event.search;
+    if(searchTerm){
+      this.liveSearchApi.searchLiveRelational(searchTerm, 'Customer', 'id', 'name', 'name', 'status', '1',).subscribe(searchResults => {
+        this.customersListOption = [...searchResults]
+      });
+      // this.liveSearchApi.searchLiveRelational(searchTerm, 'Customer', 'id', 'name', 'name', 'status', '1',).subscribe((response: ILiveSearchModel) => {
+      //   this.customersListOption = [response];
+      // });
+    }else{
+      this.customersListOption = [];
+    }
+  }
+
   filterApplied(){
     console.log("filter Applied", this.verifiedValue);
     
-    // this.loadUserDataTable(true);
+    // this.loadCustomerContactDataTable(true);
     this.reloadEvent.emit(true);
   }
   
 
   resetFilter(){
     console.log("filter Reset");
-    // this.loadUserDataTable(false);
+    // this.loadCustomerContactDataTable(false);
     this.reloadEvent.emit(true);
   }
 
   delete(id: number) {
-    this.apiService.deleteUser(id).subscribe(() => {
+    this.customerContactApiService.deleteContact(id).subscribe(() => {
       this.reloadEvent.emit(true);
     });
   }
 
   edit(id: number) {
-    this.apiService.edit(id).subscribe((response: ApiResponse) => {
-      this.userModel = response.data;
+    this.customerContactApiService.edit(id).subscribe((response: ApiResponse) => {
+      this.contactModel = response.data;
+      console.log(this.contactModel);
     });
   }
 
   create() {
-    this.userModel = { id: 0, name: '', email: '', };
+    this.contactModel = { id: 0, name: '', email: '', customer_id: 0};
   }
 
   onSubmit(event: Event, myForm: NgForm) {
+    console.log(this.contactModel);
+    
     if (myForm && myForm.invalid) {
       return;
     }
+    // return;
 
     this.isLoading = true;
 
     const successAlert: SweetAlertOptions = {
       icon: 'success',
       title: 'Success!',
-      text: this.userModel.id > 0 ? 'User updated successfully!' : 'User created successfully!',
+      text: this.contactModel.id > 0 ? 'User updated successfully!' : 'User created successfully!',
     };
     const errorAlert: SweetAlertOptions = {
       icon: 'error',
@@ -190,7 +212,7 @@ export class UserListingComponent implements OnInit, AfterViewInit, OnDestroy {
     };
 
     const updateFn = () => {
-      this.apiService.updateUser(this.userModel.id, this.userModel).subscribe({
+      this.customerContactApiService.updateContact(this.contactModel.id, this.contactModel).subscribe({
         next: () => {
           this.showAlert(successAlert);
           this.reloadEvent.emit(true);
@@ -205,8 +227,8 @@ export class UserListingComponent implements OnInit, AfterViewInit, OnDestroy {
     };
 
     const createFn = () => {
-      this.userModel.password = 'test123';
-      this.apiService.createUser(this.userModel).subscribe({
+      this.contactModel.password = 'test123';
+      this.customerContactApiService.createContact(this.contactModel).subscribe({
         next: () => {
           this.showAlert(successAlert);
           this.reloadEvent.emit(true);
@@ -220,7 +242,7 @@ export class UserListingComponent implements OnInit, AfterViewInit, OnDestroy {
       });
     };
 
-    if (this.userModel.id > 0) {
+    if (this.contactModel.id > 0) {
       updateFn();
     } else {
       createFn();
