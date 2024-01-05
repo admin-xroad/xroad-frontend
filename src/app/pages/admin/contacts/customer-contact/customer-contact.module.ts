@@ -7,27 +7,22 @@ import { NgbCollapseModule, NgbDropdownModule, NgbNavModule, NgbTooltipModule } 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SweetAlert2Module } from '@sweetalert2/ngx-sweetalert2';
 import { Select2Module } from 'ng-select2-component';
-import { CustomerDetailsComponent } from './customer-details/customer-details.component';
-import { CustomerListingComponent } from './customer-listing/customer-listing.component';
+import { CustomerContactListingComponent } from './customer-contact-listing/customer-contact-listing.component';
 
-const routes =[
-    {
-        path: '',
-        component: CustomerListingComponent,
-    },
-    {
-        path: ':id',
-        component: CustomerDetailsComponent,
-    },
-]
+
 
 @NgModule({
-    declarations: [CustomerListingComponent, CustomerDetailsComponent],
+    declarations: [CustomerContactListingComponent],
     imports: [
         CommonModule,
         FormsModule,
         ReactiveFormsModule,
-        RouterModule.forChild(routes),
+        RouterModule.forChild([
+            {
+                path: '',
+                component: CustomerContactListingComponent,
+            },
+        ]),
         CrudModule,
         SharedModule,
         NgbNavModule,
@@ -38,4 +33,4 @@ const routes =[
         Select2Module,
     ]
 })
-export class CustomerModule { }
+export class CustomerContactModule { }

@@ -4,16 +4,17 @@ import { SwalComponent } from '@sweetalert2/ngx-sweetalert2';
 import { Observable } from 'rxjs';
 import { SweetAlertOptions } from 'sweetalert2';
 import moment from 'moment';
-import { CustomerService, DataTablesResponse, ICustomerModel, ApiResponse } from 'src/app/services/admin/customer/customer.service';
-import { CountryService } from 'src/app/services/admin/country/country.service';
 import { Select2Group, Select2Option, Select2SearchEvent } from 'ng-select2-component';
-
+import { CustomerContactService, ICustomerContactModel, ApiResponse, DataTablesResponse } from 'src/app/services/admin/customer-contact/customer-contact.service';
+import { LiveSearchService, ILiveSearchModel } from 'src/app/services/admin/live-search/live-search.service';
 @Component({
-  selector: 'app-customer-listing',
-  templateUrl: './customer-listing.component.html',
-  styleUrl: './customer-listing.component.scss'
+  selector: 'app-customer-contact-listing',
+  // standalone: true,
+  // imports: [],
+  templateUrl: './customer-contact-listing.component.html',
+  styleUrl: './customer-contact-listing.component.scss'
 })
-export class CustomerListingComponent implements OnInit, AfterViewInit, OnDestroy {
+export class CustomerContactListingComponent implements OnInit, AfterViewInit, OnDestroy {
 
   isCollapsed1 = false;
   isCollapsed2 = true;
@@ -21,7 +22,7 @@ export class CustomerListingComponent implements OnInit, AfterViewInit, OnDestro
 
   isLoading = false;
 
-  customers: DataTablesResponse;
+  contacts: DataTablesResponse;
 
   datatableConfig: DataTables.Settings = {};
 
@@ -30,14 +31,15 @@ export class CustomerListingComponent implements OnInit, AfterViewInit, OnDestro
 
   // Single model
   // aUser: Observable<ApiResponse>;
-  customerModel: ICustomerModel = { id: 0, name: '', email: '', phone: '', country_id: '', city: '', status: undefined };
+  contactModel: ICustomerContactModel = { id: 0, name: '', email: '', phone: '', status: undefined, customer_id: 0, password: "" };
+  
+  liveSearchModel: ILiveSearchModel = { value: "", label: "" };
 
   @ViewChild('noticeSwal')
   noticeSwal!: SwalComponent;
 
   swalOptions: SweetAlertOptions = {};
 
-  roles$: Observable<DataTablesResponse>;
 
   verifiedOption = [
     { value: "", label: 'All' },
@@ -46,28 +48,19 @@ export class CustomerListingComponent implements OnInit, AfterViewInit, OnDestro
   ];
   verifiedValue = "";
 
-  countriesListOption: (Select2Option | Select2Group)[] = []; 
-  countryModel:any=[];
+  customersListOption: (Select2Option | Select2Group)[] = []; 
 
-  constructor(private customerApiService: CustomerService , private countryApiService: CountryService, private cdr: ChangeDetectorRef) { }
+  constructor(private customerContactApiService: CustomerContactService , private liveSearchApi: LiveSearchService ,private cdr: ChangeDetectorRef) { }
 
   ngAfterViewInit(): void {
   }
 
   ngOnInit(): void {
-    this.loadCustomerDataTable();
-    this.countryApiService.getCountriesList().subscribe((response: any) => {
-      this.countryModel = response.data;
-      // console.log(this.countryModel.find());
-      this.countriesListOption = response.data.map((country: any) => ({
-        value: country.id,
-        label: country.name
-      }));
-    });
+    this.loadCustomerContactDataTable();
+    
   }
 
-  loadCustomerDataTable(isFiltered = false){
-    console.log("loadCustomerDataTable");
+  loadCustomerContactDataTable(isFiltered = false){
     
     this.datatableConfig = {
       serverSide: true,
@@ -84,7 +77,7 @@ export class CustomerListingComponent implements OnInit, AfterViewInit, OnDestro
         // Merge additional filters with the DataTables parameters
         const requestData = { ...dataTablesParameters, ...additionalFilters };
 
-        this.customerApiService.getCustomers(requestData).subscribe(resp => {
+        this.customerContactApiService.getCustomerContacts(requestData).subscribe(resp => {
           callback(resp);
         });
       },
@@ -104,7 +97,7 @@ export class CustomerListingComponent implements OnInit, AfterViewInit, OnDestro
 
             const nameAndEmail = `
               <div class="d-flex flex-column" data-action="view" data-id="${full.id}">
-                <a href="admin/customers/${full.id}" class="text-gray-800 text-hover-primary mb-1">${data}</a>
+                <a href="admin/users/${full.id}" class="text-gray-800 text-hover-primary mb-1">${data}</a>
                 <span>${full.email}</span>
               </div>
             `;
@@ -121,6 +114,11 @@ export class CustomerListingComponent implements OnInit, AfterViewInit, OnDestro
         },
         {
           title: 'Phone', data: 'phone'
+        },
+        {
+          title: 'Company', data: 'customer_id', render: function (data, type, full) {
+            return full.customer.name;
+          }
         },
         {
           title: 'Joined Date', data: 'created_at', render: function (data) {
@@ -143,47 +141,53 @@ export class CustomerListingComponent implements OnInit, AfterViewInit, OnDestro
   }
 
 
-  searchCountry(event: Select2SearchEvent) {
-      event.filteredData(
-          event.search
-              ? event.data.filter(option => option.label.toLowerCase().includes(event.search.toLowerCase()))
-              : event.data,
-      );
+  searchCustomers(event: Select2SearchEvent) {
+    const searchTerm = event.search;
+    if(searchTerm){
+      this.liveSearchApi.searchLiveRelational(searchTerm, 'Customer', 'id', 'name', 'name', 'status', '1',).subscribe(searchResults => {
+        this.customersListOption = [...searchResults]
+      });
+      // this.liveSearchApi.searchLiveRelational(searchTerm, 'Customer', 'id', 'name', 'name', 'status', '1',).subscribe((response: ILiveSearchModel) => {
+      //   this.customersListOption = [response];
+      // });
+    }else{
+      this.customersListOption = [];
+    }
   }
 
   filterApplied(){
     console.log("filter Applied", this.verifiedValue);
     
-    // this.loadCustomerDataTable(true);
+    // this.loadCustomerContactDataTable(true);
     this.reloadEvent.emit(true);
   }
   
 
   resetFilter(){
     console.log("filter Reset");
-    // this.loadCustomerDataTable(false);
+    // this.loadCustomerContactDataTable(false);
     this.reloadEvent.emit(true);
   }
 
   delete(id: number) {
-    this.customerApiService.deleteCustomer(id).subscribe(() => {
+    this.customerContactApiService.deleteContact(id).subscribe(() => {
       this.reloadEvent.emit(true);
     });
   }
 
   edit(id: number) {
-    this.customerApiService.edit(id).subscribe((response: ApiResponse) => {
-      this.customerModel = response.data;
-      console.log(this.customerModel);
+    this.customerContactApiService.edit(id).subscribe((response: ApiResponse) => {
+      this.contactModel = response.data;
+      console.log(this.contactModel);
     });
   }
 
   create() {
-    this.customerModel = { id: 0, name: '', email: '', };
+    this.contactModel = { id: 0, name: '', email: '', customer_id: 0};
   }
 
   onSubmit(event: Event, myForm: NgForm) {
-    console.log(this.customerModel);
+    console.log(this.contactModel);
     
     if (myForm && myForm.invalid) {
       return;
@@ -195,7 +199,7 @@ export class CustomerListingComponent implements OnInit, AfterViewInit, OnDestro
     const successAlert: SweetAlertOptions = {
       icon: 'success',
       title: 'Success!',
-      text: this.customerModel.id > 0 ? 'User updated successfully!' : 'User created successfully!',
+      text: this.contactModel.id > 0 ? 'User updated successfully!' : 'User created successfully!',
     };
     const errorAlert: SweetAlertOptions = {
       icon: 'error',
@@ -208,7 +212,7 @@ export class CustomerListingComponent implements OnInit, AfterViewInit, OnDestro
     };
 
     const updateFn = () => {
-      this.customerApiService.updateCustomer(this.customerModel.id, this.customerModel).subscribe({
+      this.customerContactApiService.updateContact(this.contactModel.id, this.contactModel).subscribe({
         next: () => {
           this.showAlert(successAlert);
           this.reloadEvent.emit(true);
@@ -223,8 +227,8 @@ export class CustomerListingComponent implements OnInit, AfterViewInit, OnDestro
     };
 
     const createFn = () => {
-      this.customerModel.password = 'test123';
-      this.customerApiService.createCustomer(this.customerModel).subscribe({
+      this.contactModel.password = 'test123';
+      this.customerContactApiService.createContact(this.contactModel).subscribe({
         next: () => {
           this.showAlert(successAlert);
           this.reloadEvent.emit(true);
@@ -238,7 +242,7 @@ export class CustomerListingComponent implements OnInit, AfterViewInit, OnDestro
       });
     };
 
-    if (this.customerModel.id > 0) {
+    if (this.contactModel.id > 0) {
       updateFn();
     } else {
       createFn();
