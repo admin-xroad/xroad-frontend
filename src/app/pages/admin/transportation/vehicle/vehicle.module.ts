@@ -8,6 +8,7 @@ import { NgbCollapseModule, NgbDropdownModule, NgbNavModule, NgbTooltipModule } 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SweetAlert2Module } from '@sweetalert2/ngx-sweetalert2';
 import { vehicleStatusFormatPipe } from '../../../../pipes/admin/vehicle/vehicle-status-format.pipe';
+import { Select2Module } from 'ng-select2-component';
 
 
 
@@ -33,6 +34,7 @@ import { vehicleStatusFormatPipe } from '../../../../pipes/admin/vehicle/vehicle
     NgbDropdownModule,
     NgbCollapseModule,
     NgbTooltipModule,
+    Select2Module,
     SweetAlert2Module.forChild(),
   ]
 })

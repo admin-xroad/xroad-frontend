@@ -123,6 +123,8 @@ export class CrudComponent implements OnInit, AfterViewInit, OnDestroy {
             break;
 
           case 'create':
+            console.log('this.modal', this.modal);
+            
             this.createEvent.emit(true);
             this.modalRef = this.modalService.open(this.modal, this.modalConfig);
             break;

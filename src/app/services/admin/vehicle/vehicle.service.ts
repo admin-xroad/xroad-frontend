@@ -31,12 +31,32 @@ export interface IVehicleModel {
 })
 export class VehicleService {
 
-  private apiUrl = `${environment.apiUrl}/api/v1/vehicles`;
-
   constructor(private http: HttpClient) {}
 
   getVehicles(dataTablesParameters: any): Observable<DataTablesResponse> {
     const url = `${environment.apiUrl}/admin/v1/vehicles/`;
     return this.http.post<DataTablesResponse>(url, dataTablesParameters);
   }
+
+  edit(id: number): Observable<ApiResponse> {
+    const url = `${environment.apiUrl}/admin/v1/vehicles/edit/${id}`;
+    return this.http.get<ApiResponse>(url);
+  }
+
+  updateVehicle(id: number, customer: IVehicleModel): Observable<IVehicleModel> {
+    const url = `${environment.apiUrl}/admin/v1/vehicles/update/${id}`;
+    return this.http.put<IVehicleModel>(url, customer);
+  }
+
+  createVehicle(customer: IVehicleModel): Observable<IVehicleModel> {
+    const url = `${environment.apiUrl}/admin/v1/vehicles/store`;
+    return this.http.post<IVehicleModel>(url, customer);
+  }
+
+  deleteVehicle(id: number): Observable<void> {
+      const url = `${environment.apiUrl}/admin/v1/vehicles/delete/${id}`;
+      return this.http.delete<void>(url);
+  }
+
+
 }
