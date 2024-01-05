@@ -6,6 +6,8 @@ import { ApiResponse, DataTablesResponse, IUserModel, UserService } from 'src/ap
 import { SweetAlertOptions } from 'sweetalert2';
 import moment from 'moment';
 import { RoleService } from 'src/app/services/admin/role/role.service';
+import { ILiveSearchModel, LiveSearchService } from 'src/app/services/admin/live-search/live-search.service';
+import { Select2Group, Select2Option, Select2SearchEvent } from 'ng-select2-component';
 
 @Component({
   selector: 'app-user-listing',
@@ -31,6 +33,8 @@ export class UserListingComponent implements OnInit, AfterViewInit, OnDestroy {
   // aUser: Observable<ApiResponse>;
   userModel: IUserModel = { id: 0, name: '', email: '', role: '' };
 
+  liveSearchModel: ILiveSearchModel = { value: "", label: "" };
+
   @ViewChild('noticeSwal')
   noticeSwal!: SwalComponent;
 
@@ -45,8 +49,11 @@ export class UserListingComponent implements OnInit, AfterViewInit, OnDestroy {
   ];
   verifiedValue = "";
   
+  rolesListOption: (Select2Option | Select2Group)[] = []; 
+  selectedRoles: number[] = [];
 
-  constructor(private apiService: UserService, private roleService: RoleService, private cdr: ChangeDetectorRef) { }
+
+  constructor(private apiService: UserService, private liveSearchApi: LiveSearchService, private roleService: RoleService, private cdr: ChangeDetectorRef) { }
 
   ngAfterViewInit(): void {
   }
@@ -160,11 +167,36 @@ export class UserListingComponent implements OnInit, AfterViewInit, OnDestroy {
   edit(id: number) {
     this.apiService.edit(id).subscribe((response: ApiResponse) => {
       this.userModel = response.data;
+
+      const roles = response.data.roles || [];
+      this.selectedRoles = roles.map(role => role.id || 0);
+
+      this.rolesListOption = roles.map(role => ({
+        value: role.id || 0,
+        label: role.name || ''
+      }));
+      console.log(this.rolesListOption, this.selectedRoles);
+
     });
+  }
+
+  searchRoles(event: Select2SearchEvent) {
+    const searchTerm = event.search;
+    if(searchTerm){
+      this.liveSearchApi.searchLiveRelational(searchTerm, 'Role', 'id', 'name', 'name', 'guard_name', 'web',).subscribe(searchResults => {
+        this.rolesListOption = [...searchResults]
+      });
+      // this.liveSearchApi.searchLiveRelational(searchTerm, 'Customer', 'id', 'name', 'name', 'status', '1',).subscribe((response: ILiveSearchModel) => {
+      //   this.rolesListOption = [response];
+      // });
+    }else{
+      this.rolesListOption = [];
+    }
   }
 
   create() {
     this.userModel = { id: 0, name: '', email: '', };
+    // this.selectedRole[] = [];
   }
 
   onSubmit(event: Event, myForm: NgForm) {

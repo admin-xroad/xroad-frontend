@@ -21,6 +21,8 @@ export class CustomerContactListingComponent implements OnInit, AfterViewInit, O
   isCollapsedFilter = true;
 
   isLoading = false;
+  
+  editMode:boolean = false;
 
   contacts: DataTablesResponse;
 
@@ -176,13 +178,19 @@ export class CustomerContactListingComponent implements OnInit, AfterViewInit, O
   }
 
   edit(id: number) {
+    this.editMode = true;
     this.customerContactApiService.edit(id).subscribe((response: ApiResponse) => {
       this.contactModel = response.data;
-      console.log(this.contactModel);
+      const customer = response.data.customer
+      const customerId = customer?.id || 0;
+      const customerName = customer?.name || '';
+  
+      this.customersListOption = [{ value: customerId, label: customerName }];    
     });
   }
 
   create() {
+    this.editMode = false;
     this.contactModel = { id: 0, name: '', email: '', customer_id: 0};
   }
 
@@ -199,7 +207,7 @@ export class CustomerContactListingComponent implements OnInit, AfterViewInit, O
     const successAlert: SweetAlertOptions = {
       icon: 'success',
       title: 'Success!',
-      text: this.contactModel.id > 0 ? 'User updated successfully!' : 'User created successfully!',
+      text: this.contactModel.id > 0 ? 'Contact updated successfully!' : 'Contact created successfully!',
     };
     const errorAlert: SweetAlertOptions = {
       icon: 'error',
@@ -227,7 +235,7 @@ export class CustomerContactListingComponent implements OnInit, AfterViewInit, O
     };
 
     const createFn = () => {
-      this.contactModel.password = 'test123';
+      // this.contactModel.password = 'test123';
       this.customerContactApiService.createContact(this.contactModel).subscribe({
         next: () => {
           this.showAlert(successAlert);

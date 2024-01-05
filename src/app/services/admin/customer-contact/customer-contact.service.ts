@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { Observable } from 'rxjs';
+import { ICustomerModel } from '../customer/customer.service';
 
 export interface DataTablesResponse {
   draw?: number;
@@ -31,6 +32,7 @@ export interface ICustomerContactModel {
   status?: number;
   phone?: string;
   customer_id: number;
+  customer?: null | ICustomerModel;
 }
 
 @Injectable({
@@ -64,10 +66,5 @@ export class CustomerContactService {
     const url = `${environment.apiUrl}/admin/v1/customer-contacts/delete/${id}`;
     return this.http.delete<void>(url);
   }
-
-  // liveSearch(liveurl: string): any {
-  //   const url = `${environment.apiUrl}/${liveurl}`;
-  //   return this.http.get<any>(url);
-  // }
 
 }

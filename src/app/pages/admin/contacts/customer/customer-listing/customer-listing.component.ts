@@ -49,6 +49,8 @@ export class CustomerListingComponent implements OnInit, AfterViewInit, OnDestro
   countriesListOption: (Select2Option | Select2Group)[] = []; 
   countryModel:any=[];
 
+  editMode:Boolean = false;
+
   constructor(private customerApiService: CustomerService , private countryApiService: CountryService, private cdr: ChangeDetectorRef) { }
 
   ngAfterViewInit(): void {
@@ -172,6 +174,7 @@ export class CustomerListingComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   edit(id: number) {
+    this.editMode = true;
     this.customerApiService.edit(id).subscribe((response: ApiResponse) => {
       this.customerModel = response.data;
       console.log(this.customerModel);
@@ -180,6 +183,7 @@ export class CustomerListingComponent implements OnInit, AfterViewInit, OnDestro
 
   create() {
     this.customerModel = { id: 0, name: '', email: '', };
+    this.editMode = false;
   }
 
   onSubmit(event: Event, myForm: NgForm) {
