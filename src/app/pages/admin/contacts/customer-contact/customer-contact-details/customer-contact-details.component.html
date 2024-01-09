@@ -1,0 +1,79 @@
+<div id="kt_app_content_container" class="app-container container-xxl">
+    <!--begin::Layout-->
+    <div class="d-flex flex-column flex-lg-row">
+        <!--begin::Sidebar-->
+        <div class="flex-column flex-lg-row-auto w-lg-250px w-xl-350px mb-10">
+            <!--begin::Card-->
+            <div class="card mb-5 mb-xl-8">
+                <!--begin::Card body-->
+                <div class="card-body">
+                    <!--begin::Summary-->
+                    <!--begin::User Info-->
+                    <div class="d-flex flex-center flex-column py-5">
+                        <!--begin::Avatar-->
+                        <div class="symbol symbol-100px symbol-circle mb-7">
+                            <img src="assets/media/avatars/300-6.jpg" alt="image" />
+                        </div>
+                        <!--end::Avatar-->
+                        <!--begin::Name-->
+                        <a href="#" class="fs-3 text-gray-800 text-hover-primary fw-bold mb-3">{{ contactModel.name }}</a>
+                        <!--end::Name-->
+
+                    </div>
+                    <!--end::User Info-->
+                    <!--end::Summary-->
+                    <!--begin::Details toggle-->
+                    <div class="d-flex flex-stack fs-4 py-3">
+                        <div class="fw-bold rotate collapsible" (click)="collapse.toggle()"
+                            [attr.aria-expanded]="!isCollapsed" role="button">Details
+                            <span class="ms-2 rotate-180">
+                                <i class="ki-duotone fs-3" [ngClass]="{'ki-down': !isCollapsed, 'ki-up': isCollapsed}"></i>
+                            </span>
+                        </div>
+                        <!-- <span data-bs-toggle="tooltip" data-bs-trigger="hover" title="Edit customer details">
+                            <a href="#" class="btn btn-sm btn-light-primary" data-bs-toggle="modal"
+                                data-bs-target="#kt_modal_update_details">Edit</a>
+                        </span> -->
+                    </div>
+                    <!--end::Details toggle-->
+                    <div class="separator"></div>
+                    <!--begin::Details content-->
+                    <div id="kt_user_view_details" class="collapse show" #collapse="ngbCollapse"
+                        [(ngbCollapse)]="isCollapsed">
+                        <div class="pb-5 fs-6">
+                            <!--begin::Details item-->
+                            <div class="fw-bold mt-5">Account ID</div>
+                            <div class="text-gray-600">ID-{{contactModel.id}}</div>
+                            <!--begin::Details item-->
+                            <!--begin::Details item-->
+                            <div class="fw-bold mt-5">Email</div>
+                            <div class="text-gray-600">
+                                <a href="#" class="text-gray-600 text-hover-primary">{{ contactModel.email }}</a>
+                            </div>
+                            <!--begin::Details item-->
+                            <!--begin::Details item-->
+                            <div class="fw-bold mt-5">Phone</div>
+                            <div class="text-gray-600">
+                                {{ contactModel.phone }}
+                            </div>
+                            <!--begin::Details item-->
+                            <!--begin::Details item-->
+                            <div class="fw-bold mt-5">Company</div>
+                            <div class="text-gray-600">
+                                <a routerLink="/admin/customers/{{ contactModel.customer_id }}" class="text-gray-600 text-hover-primary">{{ contactModel.customer?.name }}</a>
+                            </div>
+                            <!--begin::Details item-->
+
+                        </div>
+                    </div>
+                    <!--end::Details content-->
+                </div>
+                <!--end::Card body-->
+            </div>
+            <!--end::Card-->
+        </div>
+        <!--end::Sidebar-->
+    </div>
+    <!--end::Layout-->
+
+</div>

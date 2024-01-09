@@ -127,17 +127,19 @@
           </div>
           <!--end::Input group-->
 
-          <!-- <div class="mb-7">
-            <label class="required fw-semibold fs-6 mb-5">Role</label>
-
+          <div class="mb-7">
             <select2 [data]="rolesListOption" [value]="selectedRoles"
             [(ngModel)]="selectedRoles" name="role_id" #role_id="ngModel" required
             [customSearchEnabled]="true" (search)="searchRoles($event)"
-            noResultMessage="No Results Found" placeholder="Please Select" [multiple]="true">
+            noResultMessage="No Results Found" placeholder="Please Select" (update)="updateRoles($event)" [multiple]="true">
+            <select2-label class="fw-semibold fs-6 mb-2">Role</select2-label>
           </select2>
-          
+          <div *ngIf="myForm.submitted && myForm.invalid && role_id.errors?.required"
+              class="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback">
+              <div *ngIf="role_id.errors?.['required']">Role is required</div>
+          </div>
 
-          </div> -->
+          </div>
 
         </div>
         <!--end::User form-->

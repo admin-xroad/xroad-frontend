@@ -16,8 +16,8 @@ export interface IRoleModel {
   name: string;
   created_at?: string;
   updated_at?: string;
-  permissions: IPermissionModel[];
-  users: IUserModel[];
+  permissions?: IPermissionModel[];
+  users?: IUserModel[];
 }
 
 @Injectable({

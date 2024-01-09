@@ -33,7 +33,7 @@ export class CustomerContactListingComponent implements OnInit, AfterViewInit, O
 
   // Single model
   // aUser: Observable<ApiResponse>;
-  contactModel: ICustomerContactModel = { id: 0, name: '', email: '', phone: '', status: undefined, customer_id: 0, password: "" };
+  contactModel: ICustomerContactModel = { id: 0, name: '', email: '', phone: '', customer_id: 0, password: "" };
   
   liveSearchModel: ILiveSearchModel = { value: "", label: "" };
 
@@ -99,7 +99,7 @@ export class CustomerContactListingComponent implements OnInit, AfterViewInit, O
 
             const nameAndEmail = `
               <div class="d-flex flex-column" data-action="view" data-id="${full.id}">
-                <a href="admin/users/${full.id}" class="text-gray-800 text-hover-primary mb-1">${data}</a>
+                <a href="admin/customer-contacts/${full.id}" class="text-gray-800 text-hover-primary mb-1">${data}</a>
                 <span>${full.email}</span>
               </div>
             `;
@@ -179,7 +179,7 @@ export class CustomerContactListingComponent implements OnInit, AfterViewInit, O
 
   edit(id: number) {
     this.editMode = true;
-    this.customerContactApiService.edit(id).subscribe((response: ApiResponse) => {
+    this.customerContactApiService.editContact(id).subscribe((response: ApiResponse) => {
       this.contactModel = response.data;
       const customer = response.data.customer
       const customerId = customer?.id || 0;
@@ -191,7 +191,7 @@ export class CustomerContactListingComponent implements OnInit, AfterViewInit, O
 
   create() {
     this.editMode = false;
-    this.contactModel = { id: 0, name: '', email: '', customer_id: 0};
+    this.contactModel = { id: 0, name: '', email: '', customer_id: 0, phone:''};
   }
 
   onSubmit(event: Event, myForm: NgForm) {

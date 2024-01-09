@@ -7,7 +7,8 @@ import { SweetAlertOptions } from 'sweetalert2';
 import moment from 'moment';
 import { RoleService } from 'src/app/services/admin/role/role.service';
 import { ILiveSearchModel, LiveSearchService } from 'src/app/services/admin/live-search/live-search.service';
-import { Select2Group, Select2Option, Select2SearchEvent } from 'ng-select2-component';
+import { Select2Group, Select2Option, Select2SearchEvent, Select2UpdateEvent } from 'ng-select2-component';
+import { IRoleModel } from 'src/app/_fake/services/role.service';
 
 @Component({
   selector: 'app-user-listing',
@@ -31,7 +32,7 @@ export class UserListingComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // Single model
   // aUser: Observable<ApiResponse>;
-  userModel: IUserModel = { id: 0, name: '', email: '', role: '' };
+  userModel: IUserModel = { id: 0, name: '', email: '', roles: [], };
 
   liveSearchModel: ILiveSearchModel = { value: "", label: "" };
 
@@ -48,8 +49,9 @@ export class UserListingComponent implements OnInit, AfterViewInit, OnDestroy {
     { value: 1, label: 'Yes' },
   ];
   verifiedValue = "";
-  
-  rolesListOption: (Select2Option | Select2Group)[] = []; 
+
+  rolesListOption: (Select2Option | Select2Group)[] = [];
+  selectedRolesOption: (Select2Option | Select2Group)[] = [];
   selectedRoles: number[] = [];
 
 
@@ -63,15 +65,15 @@ export class UserListingComponent implements OnInit, AfterViewInit, OnDestroy {
     this.roles$ = this.roleService.getRoles();
   }
 
-  loadUserDataTable(isFiltered = false){
+  loadUserDataTable(isFiltered = false) {
     console.log("loadUserDataTable");
-    
+
     this.datatableConfig = {
       serverSide: true,
       ajax: (dataTablesParameters: any, callback) => {
         // Include additional filter data
         const additionalFilters = {};
-        if(isFiltered){
+        if (isFiltered) {
           const additionalFilters = {
             // Add your additional filter properties here
             filter_verification: this.verifiedValue,
@@ -88,7 +90,7 @@ export class UserListingComponent implements OnInit, AfterViewInit, OnDestroy {
       columns: [
         {
           title: 'Name', data: 'name', render: function (data, type, full) {
-            
+
             const colorClasses = ['success', 'info', 'warning', 'danger'];
             const randomColorClass = colorClasses[Math.floor(Math.random() * colorClasses.length)];
 
@@ -117,9 +119,13 @@ export class UserListingComponent implements OnInit, AfterViewInit, OnDestroy {
           }
         },
         {
-          title: 'Role', data: 'role', render: function (data, type, row) {
-            const roleName = row.roles[0]?.name;
-            return roleName || '';
+          title: 'Role', data: 'roles', render: function (data, type, row) {
+            if (row.roles && row.roles.length > 0) {
+              const roleNames = row.roles.map((role: IRoleModel) => role.name).join(', ');
+              return roleNames;
+            } else {
+              return '';
+            }
           },
           orderData: [1],
           orderSequence: ['asc', 'desc'],
@@ -144,15 +150,14 @@ export class UserListingComponent implements OnInit, AfterViewInit, OnDestroy {
     };
   }
 
-  filterApplied(){
+  filterApplied() {
     console.log("filter Applied", this.verifiedValue);
-    
+
     // this.loadUserDataTable(true);
     this.reloadEvent.emit(true);
   }
-  
 
-  resetFilter(){
+  resetFilter() {
     console.log("filter Reset");
     // this.loadUserDataTable(false);
     this.reloadEvent.emit(true);
@@ -165,7 +170,7 @@ export class UserListingComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   edit(id: number) {
-    this.apiService.edit(id).subscribe((response: ApiResponse) => {
+    this.apiService.editUser(id).subscribe((response: ApiResponse) => {
       this.userModel = response.data;
 
       const roles = response.data.roles || [];
@@ -175,6 +180,7 @@ export class UserListingComponent implements OnInit, AfterViewInit, OnDestroy {
         value: role.id || 0,
         label: role.name || ''
       }));
+      this.selectedRolesOption = [...this.rolesListOption]
       console.log(this.rolesListOption, this.selectedRoles);
 
     });
@@ -182,16 +188,16 @@ export class UserListingComponent implements OnInit, AfterViewInit, OnDestroy {
 
   searchRoles(event: Select2SearchEvent) {
     const searchTerm = event.search;
-    if(searchTerm){
+    if (searchTerm) {
       this.liveSearchApi.searchLiveRelational(searchTerm, 'Role', 'id', 'name', 'name', 'guard_name', 'web',).subscribe(searchResults => {
-        this.rolesListOption = [...searchResults]
+        this.rolesListOption = [...new Set([...this.selectedRolesOption, ...searchResults])];
       });
-      // this.liveSearchApi.searchLiveRelational(searchTerm, 'Customer', 'id', 'name', 'name', 'status', '1',).subscribe((response: ILiveSearchModel) => {
-      //   this.rolesListOption = [response];
-      // });
-    }else{
-      this.rolesListOption = [];
     }
+  }
+
+  updateRoles(event: Select2UpdateEvent<any>) {
+    this.selectedRolesOption = event.options;
+    console.log(this.selectedRolesOption);
   }
 
   create() {
@@ -200,6 +206,7 @@ export class UserListingComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onSubmit(event: Event, myForm: NgForm) {
+
     if (myForm && myForm.invalid) {
       return;
     }
@@ -222,7 +229,7 @@ export class UserListingComponent implements OnInit, AfterViewInit, OnDestroy {
     };
 
     const updateFn = () => {
-      this.apiService.updateUser(this.userModel.id, this.userModel).subscribe({
+      this.apiService.updateUser(this.userModel.id, this.userModel, this.selectedRoles).subscribe({
         next: () => {
           this.showAlert(successAlert);
           this.reloadEvent.emit(true);
@@ -238,7 +245,7 @@ export class UserListingComponent implements OnInit, AfterViewInit, OnDestroy {
 
     const createFn = () => {
       this.userModel.password = 'test123';
-      this.apiService.createUser(this.userModel).subscribe({
+      this.apiService.createUser(this.userModel, this.selectedRoles).subscribe({
         next: () => {
           this.showAlert(successAlert);
           this.reloadEvent.emit(true);

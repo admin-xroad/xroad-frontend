@@ -14,27 +14,32 @@ export interface DataTablesResponse {
 export interface ApiResponse {
   status: boolean;
   message: string;
-  data: IDriveModel;
+  data: IDriverModel;
 }
 
-export interface IDriveModel {
-  avatar?: null | string;
-  created_at?: string;
-  email: string;
-  email_verified_at?: string;
+
+export interface IDriverModel {
   id: number;
-  last_login_at?: null | string;
-  last_login_ip?: null | string;
-  name?: string;
-  profile_photo_path?: null | string;
-  updated_at?: string;
-  password?: string;
-  status?: number;
-  phone_no?: string;
   customer_id: number;
-  customer?: null | ICustomerModel;
-  note?: string;
+  customer?: ICustomerModel;
+  name: string;
+  email: string;
+  email_verified_at?: string | null;
+  password?: string;
+  phone_no: string;
+  status?: string;
+  note?: string | null;
+  model?: string | null;
+  plate?: string | null;
+  city?: string | null;
+  country?: number | null;
+  profile_image?: string | null;
+  vehicle_id?: number | null;
+  created_at?: string;
+  updated_at?: string;
+  deleted_at?: string | null;
 }
+
 @Injectable({
   providedIn: 'root'
 })
@@ -47,19 +52,24 @@ export class DriverService {
     return this.http.post<DataTablesResponse>(url, dataTablesParameters);
   }
 
+  getDriver(id: number): Observable<ApiResponse> {
+    const url = `${environment.apiUrl}/admin/v1/drivers/show/${id}`;
+    return this.http.get<ApiResponse>(url);
+  }
+
   editDriver(id: number): Observable<ApiResponse> {
     const url = `${environment.apiUrl}/admin/v1/drivers/edit/${id}`;
     return this.http.get<ApiResponse>(url);
   }
 
-  updateDriver(id: number, customer: IDriveModel): Observable<IDriveModel> {
+  updateDriver(id: number, customer: IDriverModel): Observable<IDriverModel> {
     const url = `${environment.apiUrl}/admin/v1/drivers/update/${id}`;
-    return this.http.put<IDriveModel>(url, customer);
+    return this.http.put<IDriverModel>(url, customer);
   }
 
-  createDriver(customer: IDriveModel): Observable<IDriveModel> {
+  createDriver(customer: IDriverModel): Observable<IDriverModel> {
     const url = `${environment.apiUrl}/admin/v1/drivers/store`;
-    return this.http.post<IDriveModel>(url, customer);
+    return this.http.post<IDriverModel>(url, customer);
   }
 
   deleteDriver(id: number): Observable<void> {

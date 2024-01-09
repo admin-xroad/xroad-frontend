@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { Observable } from 'rxjs';
+import { CountryModel } from '../country/country.service';
 
 export interface DataTablesResponse {
   draw?: number;
@@ -15,24 +16,36 @@ export interface ApiResponse {
   message: string;
   data: ICustomerModel;
 }
-
 export interface ICustomerModel {
-  avatar?: null | string;
-  created_at?: string;
-  email: string;
-  email_verified_at?: string;
   id: number;
-  last_login_at?: null | string;
-  last_login_ip?: null | string;
-  name?: string;
-  profile_photo_path?: null | string;
-  updated_at?: string;
-  password?: string;
-  status?: number;
-  phone?: string;
-  country_id?: any;
+  name: string;
+  email: string;
+  phone: string;
+  country_id: number;
   city?: string;
+  status?: number;
+  created_at?: string;
+  updated_at?: string;
+  deleted_at?: string | null;
+  country?:CountryModel;
 }
+// export interface ICustomerModel {
+//   avatar?: null | string;
+//   created_at?: string;
+//   email: string;
+//   email_verified_at?: string;
+//   id: number;
+//   last_login_at?: null | string;
+//   last_login_ip?: null | string;
+//   name?: string;
+//   profile_photo_path?: null | string;
+//   updated_at?: string;
+//   password?: string;
+//   status?: number;
+//   phone?: string;
+//   country_id?: any;
+//   city?: string;
+// }
 
 @Injectable({
   providedIn: 'root'
@@ -47,7 +60,12 @@ export class CustomerService {
     return this.http.post<DataTablesResponse>(url, dataTablesParameters);
   }
 
-  edit(id: number): Observable<ApiResponse> {
+  getCustomer(id: number): Observable<ApiResponse> {
+    const url = `${environment.apiUrl}/admin/v1/customers/show/${id}`;
+    return this.http.get<ApiResponse>(url);
+  }
+
+  editCustomer(id: number): Observable<ApiResponse> {
     const url = `${environment.apiUrl}/admin/v1/customers/edit/${id}`;
     return this.http.get<ApiResponse>(url);
   }

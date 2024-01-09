@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import { SweetAlertOptions } from 'sweetalert2';
 import moment from 'moment';
 import { Select2Group, Select2Option, Select2SearchEvent } from 'ng-select2-component';
-import { DriverService, IDriveModel, ApiResponse, DataTablesResponse } from 'src/app/services/admin/driver/driver.service';
+import { DriverService, IDriverModel, ApiResponse, DataTablesResponse } from 'src/app/services/admin/driver/driver.service';
 import { LiveSearchService, ILiveSearchModel } from 'src/app/services/admin/live-search/live-search.service';
 @Component({
   selector: 'app-driver-listing',
@@ -30,7 +30,7 @@ export class DriverListingComponent implements OnInit, AfterViewInit, OnDestroy 
 
   // Single model
   // aUser: Observable<ApiResponse>;
-  driverModel: IDriveModel = { id: 0, name: '', email: '', phone_no: '', status: undefined, customer_id: 0, password: "", note: "" };
+  driverModel: IDriverModel = { id: 0, name: '', email: '', phone_no: '', customer_id: 0, password: "", note: "" };
   
   liveSearchModel: ILiveSearchModel = { value: "", label: "" };
 
@@ -96,7 +96,7 @@ export class DriverListingComponent implements OnInit, AfterViewInit, OnDestroy 
 
             const nameAndEmail = `
               <div class="d-flex flex-column" data-action="view" data-id="${full.id}">
-                <a href="admin/users/${full.id}" class="text-gray-800 text-hover-primary mb-1">${data}</a>
+                <a href="admin/drivers/${full.id}" class="text-gray-800 text-hover-primary mb-1">${data}</a>
                 <span>${full.email}</span>
               </div>
             `;
@@ -146,9 +146,6 @@ export class DriverListingComponent implements OnInit, AfterViewInit, OnDestroy 
       this.liveSearchApi.searchLiveRelational(searchTerm, 'Customer', 'id', 'name', 'name', 'status', '1',).subscribe(searchResults => {
         this.customersListOption = [...searchResults]
       });
-      // this.liveSearchApi.searchLiveRelational(searchTerm, 'Customer', 'id', 'name', 'name', 'status', '1',).subscribe((response: ILiveSearchModel) => {
-      //   this.customersListOption = [response];
-      // });
     }else{
       this.customersListOption = [];
     }
@@ -187,7 +184,7 @@ export class DriverListingComponent implements OnInit, AfterViewInit, OnDestroy 
 
   create() {
     this.editMode = false;
-    this.driverModel = { id: 0, name: '', email: '', customer_id: 0};
+    this.driverModel = { id: 0, name: '', email: '', customer_id: 0, phone_no:""};
   }
 
   onSubmit(event: Event, myForm: NgForm) {

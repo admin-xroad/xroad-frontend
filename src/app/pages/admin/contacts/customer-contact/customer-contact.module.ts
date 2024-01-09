@@ -8,7 +8,18 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SweetAlert2Module } from '@sweetalert2/ngx-sweetalert2';
 import { Select2Module } from 'ng-select2-component';
 import { CustomerContactListingComponent } from './customer-contact-listing/customer-contact-listing.component';
+import { CustomerContactDetailsComponent } from './customer-contact-details/customer-contact-details.component';
 
+const routes =[
+    {
+        path: '',
+        component: CustomerContactListingComponent,
+    },
+    {
+        path: ':id',
+        component: CustomerContactDetailsComponent,
+    },
+]
 
 
 @NgModule({
@@ -17,12 +28,7 @@ import { CustomerContactListingComponent } from './customer-contact-listing/cust
         CommonModule,
         FormsModule,
         ReactiveFormsModule,
-        RouterModule.forChild([
-            {
-                path: '',
-                component: CustomerContactListingComponent,
-            },
-        ]),
+        RouterModule.forChild(routes),
         CrudModule,
         SharedModule,
         NgbNavModule,

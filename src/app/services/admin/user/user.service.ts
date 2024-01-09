@@ -30,7 +30,6 @@ export interface IUserModel {
     updated_at?: string;
     password?: string;
     roles?: IRoleModel[];
-    role?: string;
 }
 
 @Injectable({
@@ -58,19 +57,21 @@ export class UserService {
     //     return this.http.get<IUserModel>(url);
     // }
 
-    edit(id: number): Observable<ApiResponse> {
+    editUser(id: number): Observable<ApiResponse> {
         const url = `${environment.apiUrl}/admin/v1/users/edit/${id}`;
         return this.http.get<ApiResponse>(url);
     }
 
-    createUser(user: IUserModel): Observable<IUserModel> {
+    createUser(user: IUserModel, roles:any): Observable<IUserModel> {
         const url = `${environment.apiUrl}/admin/v1/users/store`;
-        return this.http.post<IUserModel>(url, user);
+        const userReqs = { user, roles };
+        return this.http.post<IUserModel>(url, userReqs);
     }
 
-    updateUser(id: number, user: IUserModel): Observable<IUserModel> {
+    updateUser(id: number, user: IUserModel, roles:any): Observable<IUserModel> {
         const url = `${environment.apiUrl}/admin/v1/users/update/${id}`;
-        return this.http.put<IUserModel>(url, user);
+        const userReqs = { user, roles };
+        return this.http.put<IUserModel>(url, userReqs);
     }
 
     deleteUser(id: number): Observable<void> {

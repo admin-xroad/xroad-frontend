@@ -30,7 +30,7 @@ export class CustomerListingComponent implements OnInit, AfterViewInit, OnDestro
 
   // Single model
   // aUser: Observable<ApiResponse>;
-  customerModel: ICustomerModel = { id: 0, name: '', email: '', phone: '', country_id: '', city: '', status: undefined };
+  customerModel: ICustomerModel = { id: 0, name: '', email: '', phone: '', country_id: 0, city: '', status: undefined };
 
   @ViewChild('noticeSwal')
   noticeSwal!: SwalComponent;
@@ -175,14 +175,14 @@ export class CustomerListingComponent implements OnInit, AfterViewInit, OnDestro
 
   edit(id: number) {
     this.editMode = true;
-    this.customerApiService.edit(id).subscribe((response: ApiResponse) => {
+    this.customerApiService.editCustomer(id).subscribe((response: ApiResponse) => {
       this.customerModel = response.data;
       console.log(this.customerModel);
     });
   }
 
   create() {
-    this.customerModel = { id: 0, name: '', email: '', };
+    this.customerModel = { id: 0, name: '', email: '', phone:"", country_id:0};
     this.editMode = false;
   }
 
@@ -192,7 +192,6 @@ export class CustomerListingComponent implements OnInit, AfterViewInit, OnDestro
     if (myForm && myForm.invalid) {
       return;
     }
-    // return;
 
     this.isLoading = true;
 
@@ -227,7 +226,6 @@ export class CustomerListingComponent implements OnInit, AfterViewInit, OnDestro
     };
 
     const createFn = () => {
-      this.customerModel.password = 'test123';
       this.customerApiService.createCustomer(this.customerModel).subscribe({
         next: () => {
           this.showAlert(successAlert);
