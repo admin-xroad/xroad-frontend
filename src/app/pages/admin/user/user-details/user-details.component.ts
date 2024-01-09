@@ -1,6 +1,6 @@
 import { AfterViewInit, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { IUserModel, UserService } from 'src/app/_fake/services/user-service';
+import { ApiResponse, IUserModel, UserService } from 'src/app/services/admin/user/user.service';
 
 @Component({
   selector: 'app-user-details',
@@ -21,8 +21,8 @@ export class UserDetailsComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
-    this.userService.getUser(id).subscribe((res: IUserModel) => {
-      this.user = res;
+    this.userService.getUser(id).subscribe((res: ApiResponse) => {
+      this.user = res.data;
       this.changeDetectorRef.detectChanges();
     });
   }

@@ -52,10 +52,10 @@ export class UserService {
         return this.http.post<DataTablesResponse>(url, dataTablesParameters);
     }
 
-    // getUser(id: number): Observable<IUserModel> {
-    //     const url = `${this.apiUrl}/${id}`;
-    //     return this.http.get<IUserModel>(url);
-    // }
+    getUser(id: number): Observable<ApiResponse> {
+        const url = `${environment.apiUrl}/admin/v1/users/show/${id}`;
+        return this.http.get<ApiResponse>(url);
+    }
 
     editUser(id: number): Observable<ApiResponse> {
         const url = `${environment.apiUrl}/admin/v1/users/edit/${id}`;
