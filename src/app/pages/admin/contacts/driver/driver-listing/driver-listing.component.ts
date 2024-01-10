@@ -127,7 +127,7 @@ export class DriverListingComponent implements OnInit, AfterViewInit, OnDestroy 
         {
           title: 'Status', data: 'status', render: function (data) {
             const status = data;
-            const strClass = status == 1 ? "badge-success" : "badge-danger";
+            const strClass = status == 1 ? "badge-light-success" : "badge-light-danger";
             const strText = status == 1 ? "Active" : "Deactive";
             return `<div class='badge ${strClass} fw-bold'>${strText}</div>`;
           }

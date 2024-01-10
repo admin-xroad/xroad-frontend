@@ -120,9 +120,11 @@ export class UserListingComponent implements OnInit, AfterViewInit, OnDestroy {
         },
         {
           title: 'Role', data: 'roles', render: function (data, type, row) {
-            if (row.roles && row.roles.length > 0) {
-              const roleNames = row.roles.map((role: IRoleModel) => role.name).join(', ');
-              return roleNames;
+            if (Array.isArray(row.roles)) {
+              return row.roles.map(function (role: any) {
+                const color = ['info', 'success', 'warning', 'danger', 'primary'][Math.floor(Math.random() * 5)];
+                return `<a href="#" class="badge fs-7 m-1 badge-light-${color}">${role.name}</a>`;
+              }).join('');
             } else {
               return '';
             }
@@ -202,7 +204,7 @@ export class UserListingComponent implements OnInit, AfterViewInit, OnDestroy {
 
   create() {
     this.userModel = { id: 0, name: '', email: '', };
-    // this.selectedRole[] = [];
+    this.selectedRoles = [];
   }
 
   onSubmit(event: Event, myForm: NgForm) {
