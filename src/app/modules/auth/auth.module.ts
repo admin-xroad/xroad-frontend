@@ -12,19 +12,19 @@ import { TranslationModule } from '../i18n/translation.module';
 
 @NgModule({
   declarations: [
-    LoginComponent,
-    RegistrationComponent,
-    ForgotPasswordComponent,
-    LogoutComponent,
-    AuthComponent,
+    // LoginComponent,
+    // RegistrationComponent,
+    // ForgotPasswordComponent,
+    // LogoutComponent,
+    // AuthComponent,
   ],
   imports: [
-    CommonModule,
-    TranslationModule,
-    AuthRoutingModule,
-    FormsModule,
-    ReactiveFormsModule,
-    HttpClientModule,
+    // CommonModule,
+    // TranslationModule,
+    // AuthRoutingModule,
+    // FormsModule,
+    // ReactiveFormsModule,
+    // HttpClientModule,
   ],
 })
 export class AuthModule {}

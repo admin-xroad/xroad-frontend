@@ -1,11 +1,45 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { LayoutComponent } from 'src/app/_metronic/layout/layout.component';
+import { LoginComponent } from './auth/login/login.component';
+import { RegistrationComponent } from 'src/app/modules/auth/components/registration/registration.component';
+import { ForgotPasswordComponent } from 'src/app/modules/auth/components/forgot-password/forgot-password.component';
+import { LogoutComponent } from 'src/app/modules/auth/components/logout/logout.component';
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 const routes: Routes = [
+
+  // {
+  //   path: 'auth',
+  //   loadChildren: () => import('./auth/layout/admin-auth.module').then((m) => m.AdminAuthModule),
+  // },
+  
+  
   {
-    path: 'dashboard',
-    loadChildren: () => import('./dashboard/dashboard.module').then((m) => m.DashboardModule),
+    path:'',
+    component:LayoutComponent,
+    children:[
+      {
+        path: 'users',
+        loadChildren: () => import('./user-management/user/user.module').then((m) => m.UserModule),
+      },
+      {
+        path: 'dashboard',
+        loadChildren: () => import('./dashboard/dashboard.module').then((m) => m.DashboardModule),
+      },
+
+      {
+        path: 'customers',
+        loadChildren: () => import('./contacts/customer/customer.module').then((m) => m.CustomerModule),
+      },
+
+
+    ]
+    
   },
+
+ 
   {
     path: 'builder',
     loadChildren: () => import('./builder/builder.module').then((m) => m.BuilderModule),
@@ -35,14 +69,8 @@ const routes: Routes = [
   //   loadChildren: () => import('../modules/apps/chat/chat.module').then((m) => m.ChatModule),
   //   // data: { layout: 'light-sidebar' },
   // },
-  {
-    path: 'users',
-    loadChildren: () => import('./user-management/user/user.module').then((m) => m.UserModule),
-  },
-  {
-    path: 'customers',
-    loadChildren: () => import('./contacts/customer/customer.module').then((m) => m.CustomerModule),
-  },
+ 
+  
   {
     path: 'customer-contacts',
     loadChildren: () => import('./contacts/customer-contact/customer-contact.module').then((m) => m.CustomerContactModule),
@@ -74,7 +102,16 @@ const routes: Routes = [
   },
 ];
 @NgModule({
-  imports: [RouterModule.forChild(routes)],
+
+
+
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    RouterModule.forChild(routes),
+    // TranslationModule,
+  ],
   exports: [RouterModule],
 })
 export class AdminRoutingModule {}

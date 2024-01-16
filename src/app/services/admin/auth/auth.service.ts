@@ -4,7 +4,6 @@ import { map, catchError, switchMap, finalize, tap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { Router } from '@angular/router';
 import { AuthHTTPService } from 'src/app/modules/auth/services/auth-http';
-import { LoginModel } from 'src/app/pages/admin/models/login.model';
 import { UserModel } from 'src/app/modules/auth';
 import { HttpClient } from '@angular/common/http';
 
@@ -233,7 +232,7 @@ export class AuthService implements OnDestroy {
     return false;
   }
 
-  private getAuthFromLocalStorage(): LoginModel | undefined {
+  private getAuthFromLocalStorage(): any | undefined {
     try {
       const lsValue = localStorage.getItem(this.authLocalStorageToken);
       if (!lsValue) {

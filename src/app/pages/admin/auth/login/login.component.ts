@@ -6,7 +6,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, Subscription, first } from 'rxjs';
 import { UserModel } from 'src/app/modules/auth';
 import { AuthService} from '../../../../services/admin/auth/auth.service';
-import { LoginModel } from '../../models/login.model';
 
 
 @Component({
