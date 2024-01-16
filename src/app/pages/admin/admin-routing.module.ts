@@ -1,6 +1,7 @@
-import { Routes } from '@angular/router';
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
 
-const AdminRouting: Routes = [
+const routes: Routes = [
   {
     path: 'dashboard',
     loadChildren: () => import('./dashboard/dashboard.module').then((m) => m.DashboardModule),
@@ -72,5 +73,10 @@ const AdminRouting: Routes = [
     redirectTo: 'error/404',
   },
 ];
+@NgModule({
+  imports: [RouterModule.forChild(routes)],
+  exports: [RouterModule],
+})
+export class AdminRoutingModule {}
 
-export { AdminRouting };
+
