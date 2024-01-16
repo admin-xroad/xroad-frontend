@@ -36,7 +36,7 @@ const AdminRouting: Routes = [
   // },
   {
     path: 'users',
-    loadChildren: () => import('./user/user.module').then((m) => m.UserModule),
+    loadChildren: () => import('./user-management/user/user.module').then((m) => m.UserModule),
   },
   {
     path: 'customers',
@@ -52,7 +52,7 @@ const AdminRouting: Routes = [
   },
   {
     path: 'roles',
-    loadChildren: () => import('./role/role.module').then((m) => m.RoleModule),
+    loadChildren: () => import('./user-management/role/role.module').then((m) => m.RoleModule),
   },
   {
     path: 'permissions',

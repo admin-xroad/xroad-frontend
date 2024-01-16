@@ -8,7 +8,6 @@ import moment from 'moment';
 import { RoleService } from 'src/app/services/admin/role/role.service';
 import { ILiveSearchModel, LiveSearchService } from 'src/app/services/admin/live-search/live-search.service';
 import { Select2Group, Select2Option, Select2SearchEvent, Select2UpdateEvent } from 'ng-select2-component';
-import { IRoleModel } from 'src/app/_fake/services/role.service';
 
 @Component({
   selector: 'app-user-listing',
