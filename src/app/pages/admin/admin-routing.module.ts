@@ -7,6 +7,7 @@ import { ForgotPasswordComponent } from 'src/app/modules/auth/components/forgot-
 import { LogoutComponent } from 'src/app/modules/auth/components/logout/logout.component';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { AdminAuthGuard } from './guards/admin-auth.guard';
 
 const routes: Routes = [
 
@@ -32,6 +33,35 @@ const routes: Routes = [
       {
         path: 'customers',
         loadChildren: () => import('./contacts/customer/customer.module').then((m) => m.CustomerModule),
+      },
+      {
+        path: 'customer-contacts',
+        loadChildren: () => import('./contacts/customer-contact/customer-contact.module').then((m) => m.CustomerContactModule),
+      },
+      {
+        path: 'drivers',
+        loadChildren: () => import('./contacts/driver/driver.module').then((m) => m.DriverModule),
+      },
+      {
+        path: 'roles',
+        loadChildren: () => import('./user-management/role/role.module').then((m) => m.RoleModule),
+      },
+      {
+        path: 'permissions',
+        loadChildren: () => import('./permission/permission.module').then((m) => m.PermissionModule),
+      },
+      {
+        path: 'transportation/vehicles',
+        loadChildren: () => import('./transportation/vehicle/vehicle.module').then((m) => m.VehicleModule),
+      },
+      {
+        path: '',
+        redirectTo: '/dashboard',
+        pathMatch: 'full',
+      },
+      {
+        path: '**',
+        redirectTo: 'error/404',
       },
 
 
@@ -71,35 +101,7 @@ const routes: Routes = [
   // },
  
   
-  {
-    path: 'customer-contacts',
-    loadChildren: () => import('./contacts/customer-contact/customer-contact.module').then((m) => m.CustomerContactModule),
-  },
-  {
-    path: 'drivers',
-    loadChildren: () => import('./contacts/driver/driver.module').then((m) => m.DriverModule),
-  },
-  {
-    path: 'roles',
-    loadChildren: () => import('./user-management/role/role.module').then((m) => m.RoleModule),
-  },
-  {
-    path: 'permissions',
-    loadChildren: () => import('./permission/permission.module').then((m) => m.PermissionModule),
-  },
-  {
-    path: 'transportation/vehicles',
-    loadChildren: () => import('./transportation/vehicle/vehicle.module').then((m) => m.VehicleModule),
-  },
-  {
-    path: '',
-    redirectTo: '/dashboard',
-    pathMatch: 'full',
-  },
-  {
-    path: '**',
-    redirectTo: 'error/404',
-  },
+  
 ];
 @NgModule({
 

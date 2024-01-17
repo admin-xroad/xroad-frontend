@@ -67,89 +67,17 @@ export class AuthService implements OnDestroy {
         }
       }),
     );
-
-
-    // return this.authHttpService.login(email, password).pipe(
-    //   map((auth: LoginModel) => {
-    //     const result = this.setAuthFromLocalStorage(auth.data.auth_token);
-    //     return result;
-    //   }),
-    //   switchMap(() => this.getUserByToken()),
-    //   catchError((err) => {
-    //     console.error('err', err);
-    //     return of(undefined);
-    //   }),
-    //   finalize(() => this.isLoadingSubject.next(false))
-    // );
-
-
-   
-
-
-    // console.log('works done');
-    // this.isLoadingSubject.next(true);
-    // return this.authHttpService.login(email, password).pipe(
-    //   tap((user: any) => {
-    //     console.log(user.authToken);
-       
-    //   })
-    // );
   }
 
-
-
-
-
-  // login(email: string, password: string): Observable<UserType> {
-  //   console.log('works done');
-  //   this.isLoadingSubject.next(true);
-  //   return this.authHttpService.login(email, password).pipe(
-  //     map((auth: LoginModel) => {
-  //       const result = this.setAuthFromLocalStorage(auth);
-  //       return result;
-  //     }),
-  //     switchMap(() => this.getUserByToken()),
-  //     catchError((err) => {
-  //       console.error('err', err);
-  //       return of(undefined);
-  //     }),
-  //     finalize(() => this.isLoadingSubject.next(false))
-  //   );
-  // }
-
-
-
-  // login(email: string, password: string): Observable<any> {
-  //   return this.http.post(`http://127.0.0.1:8000/api/admin/v1/login`,  {email:email,password:password}).pipe(
-
-  //     map((data: any) => data),
-  //     switchMap(data => {
-  //       console.log(data.data.auth_token);
-  //       this.setAuthFromLocalStorage(data.data.auth_token);
-  //       return data;
-  //       // this.auth = JSON.stringify(data);
-  //       // return from(Storage.set({ key: AUTH_DATA, value: JSON.stringify(data) }));
-  //     }),
-      
-  //   );
-
-
-    // this.http.post<LoginModel>(`http://127.0.0.1:8000/api/admin/v1/login`, {email:email,password:password}).pipe(first()).subscribe(res()=>{
-
-    // });
-  
-
-
-    // const d = this.http.post<LoginModel>(`http://127.0.0.1:8000/api/admin/v1/login`, {
-    //   email,
-    //   password,
-    // }).pipe(map(data:any)=>data{
-
-    // });
-    // return d;
-  // }
-  
-
+  isAdminLoggedIn(){
+    const auth =  localStorage.getItem(this.authLocalStorageToken);
+    // alert(auth)
+    if(auth){
+      return true;
+    }else{
+      return false;
+    }
+  }
   // login(email: string, password: string): Observable<UserType> {
   //   console.log('works done');
   //   this.isLoadingSubject.next(true);
@@ -174,7 +102,7 @@ export class AuthService implements OnDestroy {
 
   logout() {
     localStorage.removeItem(this.authLocalStorageToken);
-    this.router.navigate(['/auth/login'], {
+    this.router.navigate(['admin/auth/login'], {
       queryParams: {},
     });
   }
