@@ -14,6 +14,7 @@ import { CustomerAuthLayoutComponent } from './auth/layout/customer-auth-layout/
 import { CustomerForgotPasswordComponent } from './auth/forgot-password/customer-forgot-password.component';
 import { CustomerLayoutComponent } from './customer-layout/customer-layout.component';
 import { CustomerDashboardComponent } from './customer-dashboard/customer-dashboard.component';
+import { SharedModule } from 'src/app/_metronic/shared/shared.module';
 
 const routes: Routes = [
     
@@ -39,14 +40,16 @@ const routes: Routes = [
 
     {
         path: 'dashboard',
-        component:CustomerDashboardComponent,
+        // component:CustomerDashboardComponent,
+        component:CustomerLayoutComponent,
+
         loadChildren: () => import('./customer-dashboard/customer-dashboard.module').then((m) => m.CustomerDashboardModule),
     },
 
     {
         path: 'customer-layout',
-        component:LayoutComponent,
-        // loadChildren: () => import('./customer-layout/layout.module').then((m) => m.LayoutModule),
+        // component:CustomerLayoutComponent,
+        loadChildren: () => import('./customer-layout/customer-layout.module').then((m) => m.CustomerLayoutModule),
     },
 
     {
@@ -69,10 +72,12 @@ const routes: Routes = [
 
 
   imports: [
-    CommonModule,
+    // CommonModule,
     FormsModule,
     ReactiveFormsModule,
     RouterModule.forChild(routes),
+    CommonModule,
+    SharedModule
     // TranslationModule,
   ],
   exports: [RouterModule],
