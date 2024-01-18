@@ -11,11 +11,6 @@ import { CustomerDashboardComponent } from './pages/customer/customer-dashboard/
 import { CustomerLayoutComponent } from './pages/customer/customer-layout/customer-layout.component';
 
 export const routes: Routes = [
-  {
-    path: 'admin/auth',
-    loadChildren: () =>
-      import('./pages/admin/auth/admin-auth-routing.module').then((m) => m.AdminAuthRoutingModule),
-  },
 
   {
     path: 'admin',
@@ -24,33 +19,32 @@ export const routes: Routes = [
       import('./pages/admin/admin-routing.module').then((m) => m.AdminRoutingModule),
   },
 
-
-  {
-    path: '',
-    // component: LayoutComponent,
-    loadChildren: () =>
-      import('./pages/customer/customer-routing.module').then((m) => m.CustomerRoutingModule),
-
-  },
-  
-  
-  
-  
-  
-  
-  
   {
     path: 'error',
     loadChildren: () =>
       import('./modules/errors/errors.module').then((m) => m.ErrorsModule),
   },
+
+
+  {
+    path: '',
+    loadChildren: () =>
+      import('./pages/customer/customer-routing.module').then((m) => m.CustomerRoutingModule),
+
+  },
+  
+
+
+ 
+
+
   // {
   //   path: '',
   //   canActivate: [AuthGuard],
   //   loadChildren: () =>
   //     import('./_metronic/layout/layout.module').then((m) => m.LayoutModule),
   // },
-  { path: '**', redirectTo: 'error/404' },
+  // { path: '**',pathMatch:'full', redirectTo: 'error/404' },
 ];
 
 @NgModule({

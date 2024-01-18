@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Observable, Subscription } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
 import { first } from 'rxjs/operators';
+import { CommonModule } from '@angular/common';
 
 enum ErrorStates {
   NotSubmitted,
@@ -12,6 +13,8 @@ enum ErrorStates {
 
 @Component({
   selector: 'app-forgot-password',
+  standalone:true,
+  imports:[CommonModule,ReactiveFormsModule],
   templateUrl: './forgot-password.component.html',
   styleUrls: ['./forgot-password.component.scss'],
 })

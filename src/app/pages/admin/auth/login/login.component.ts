@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder,  FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder,  FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, Subscription, first } from 'rxjs';
@@ -10,8 +10,8 @@ import { AuthService} from '../../../../services/admin/auth/auth.service';
 
 @Component({
   selector: 'admin-app-login',
-  
-  // imports: [ReactiveFormsModule],
+  standalone:true,
+  imports: [CommonModule,FormsModule,ReactiveFormsModule],
   
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'

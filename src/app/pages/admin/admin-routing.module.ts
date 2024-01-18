@@ -2,19 +2,39 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { LayoutComponent } from 'src/app/_metronic/layout/layout.component';
 import { LoginComponent } from './auth/login/login.component';
-import { RegistrationComponent } from 'src/app/modules/auth/components/registration/registration.component';
-import { ForgotPasswordComponent } from 'src/app/modules/auth/components/forgot-password/forgot-password.component';
-import { LogoutComponent } from 'src/app/modules/auth/components/logout/logout.component';
+
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AdminAuthGuard } from './guards/admin-auth.guard';
+import { AuthComponent } from './auth/layout/auth.component';
+import { ForgotPasswordComponent } from './auth/forgot-password/forgot-password.component';
+import { RegistrationComponent } from './auth/registration/registration.component';
 
 const routes: Routes = [
 
-  // {
-  //   path: 'auth',
-  //   loadChildren: () => import('./auth/layout/admin-auth.module').then((m) => m.AdminAuthModule),
-  // },
+  {
+    path:'login',
+    component:AuthComponent,
+    children:[
+      {
+        path:'',
+        component:LoginComponent,
+        data: { returnUrl: window.location.pathname },
+
+      }
+    ],
+  },
+
+  {
+    path:'forgot-password',
+    component:AuthComponent,
+    children:[
+      {
+        path: '',
+        component: ForgotPasswordComponent,
+      }
+    ],
+  },
   
   
   {
@@ -56,13 +76,13 @@ const routes: Routes = [
       },
       {
         path: '',
-        redirectTo: '/dashboard',
         pathMatch: 'full',
+        redirectTo: 'login',
       },
-      {
-        path: '**',
-        redirectTo: 'error/404',
-      },
+      // {
+      //   path: '**',
+      //   redirectTo: 'error/404',
+      // },
 
 
     ]
@@ -74,6 +94,17 @@ const routes: Routes = [
     path: 'builder',
     loadChildren: () => import('./builder/builder.module').then((m) => m.BuilderModule),
   },
+
+  {
+    path: '',
+    pathMatch: 'full',
+    redirectTo: 'login',
+  },
+  {
+    path: '**',
+    redirectTo: 'login',
+  },
+
   // {
   //   path: 'crafted/pages/profile',
   //   loadChildren: () => import('../modules/profile/profile.module').then((m) => m.ProfileModule),

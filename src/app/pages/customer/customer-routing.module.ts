@@ -33,7 +33,14 @@ const routes: Routes = [
             {
                 path: 'forgot-password',
                 component:CustomerForgotPasswordComponent,
-            }
+            },
+
+            {
+                path: '',
+                pathMatch:'full',
+                redirectTo: 'login',
+            },
+           
 
         ]
     },
@@ -59,12 +66,8 @@ const routes: Routes = [
 
     {
         path: '**',
-        redirectTo: 'error/404',
+        redirectTo: 'login',
     },
-
-   
-  
-  
   
 ];
 @NgModule({
